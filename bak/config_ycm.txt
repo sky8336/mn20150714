@@ -1,14 +1,22 @@
 安装方式：
-先在.vimrc中 注释 ervandew/supertab、AutoComplPop
-然后在.vimrc中添加：valloric/YouComleteMe、valloric/ListToggle
-然后打开vi。在底行输入BundleInstall来安装插件
-然后，需要安装cmake 2.8，
-            解压缩，进入目录，按顺序执行./configure、 make 、make install
-然后，进入./vim/bunle/YouCompleteMe目录，执行 YCM_CORES=1 ./install.sh --clang-completer （此命令为添加C家族语义支持）（没有后面两个参数将不支持C家族语义）（YCM_CORES=1  用于解决出现The ycmd server SHUT DOWN (restart with ':YcmRestartServer'). Unexpected error while loading the YCM core library. Run ':YcmToggleLogs stderr' to check the logs.错误）
+(1) 先在.vimrc中 注释 ervandew/supertab、AutoComplPop
+(2) 在.vimrc中添加：
+	valloric/YouComleteMe
+	valloric/ListToggle
+    //打开vi。在底行输入BundleInstall来安装插件
 
-然后在.vimrc中添加：
-" zhangbei add 160531
-"
+(3) 安装cmake 2.8，
+   解压缩，进入目录，按顺序执行
+   ./configure
+    make
+	make install
+(4)进入./vim/bunle/YouCompleteMe目录，执行
+	YCM_CORES=1 ./install.sh --clang-completer
+	ps:	此命令为添加C家族语义支持,没有后面两个参数将不支持C家族语义.
+	YCM_CORES=1  用于解决出现The ycmd server SHUT DOWN (restart with ':YcmRestartServer'). Unexpected error while loading the YCM core library. Run ':YcmToggleLogs stderr' to check the logs.错误
+
+(5) 在.vimrc中添加：
+"YouComleteMe.vim
 let g:ycm_global_ycn_extra_conf='~/.vim/bundle/YouCompleteMe/Third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
 set completeopt=longest,menu    "让Vim的补全菜单行为与一般IDE一致(参考VimTip1228)
 autocmd InsertLeave * if pumvisible() == 0|pclose|endif    "离开插入模式后自动关闭预览窗口
@@ -32,9 +40,9 @@ let g:ycm_server_log_level='debug'
 
 
 "let g:ycm_global_ycm_extra_conf = '~/.vim/data/ycm/.ycm_extra_conf.py'
-" 不显示开启vim时检查ycm_extra_conf.py文件的信息  
+" 不显示开启vim时检查ycm_extra_conf.py文件的信息
 let g:ycm_confirm_extra_conf=0
-" 开启基于tag的补全，可以在这之后添加需要的标签路径  
+" 开启基于tag的补全，可以在这之后添加需要的标签路径
 let g:ycm_collect_identifiers_from_tags_files=1
 "注释和字符串中的文字也会被收入补全
 let g:ycm_collect_identifiers_from_comments_and_strings = 0
@@ -45,7 +53,7 @@ let g:ycm_min_num_of_chars_for_completion=2
 " 禁止缓存匹配项,每次都重新生成匹配项
 let g:ycm_cache_omnifunc=0
 " 开启语义补全
-let g:ycm_seed_identifiers_with_syntax=1    
+let g:ycm_seed_identifiers_with_syntax=1
 "在注释输入中也能补全
 let g:ycm_complete_in_comments = 1
 "在字符串输入中也能补全
@@ -56,8 +64,48 @@ let g:ycm_filetype_blacklist = {
             \ 'nerdtree' : 1,
             \}
 
-即可。  
+即可。
+	(6)
 目前，由于系统 .so文件问题，自动补全不能够使用，但是输入单词后，光标前移一位，按下 Ctrl + n 可以弹出补全选项，能够补全关键字
 输入函数时，按下 , + ; ，可以弹出函数补全选项。
-张贝 15:52:32
-百度文库：vim智能补全插件YouCompleteMe新手完全攻略       http://tieba.baidu.com/p/2672605209#40873390993lVim 自动补全插件 YouCompleteMe 安装与配置    http://howiefh.github.io/2015/05/22/vim-install-youcompleteme-plugin/（提示python版本低的时候需要查看这个，进行编译。）YouComplereMe 会安装libclang，安装在：/tmp/ycm_build.DLEb09/clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04/lib/libclang.so.3.8安装YouComplereMe时，需使用   YCM_CORES=1 ./install.sh  --clang-completer  来编译。cmake的版本太低，系统自带的cmake才2.6，更新到cmake2.8.    http://luochunfeng163.blog.163.com/blog/static/1670092492014519105312792/安装后，发现我的vim版本太低，不能满足需求，升级IVM。在百度找答案，发现有vim74压缩包，下载，解压。Ubuntu12.04安装YouCompleteMe插件   http://blog.csdn.net/unhappypeople/article/details/19160243ImportError: No module named setuptools 解决方法      shell# wget http://pypi.python.org/packages/source/s/setuptools/setuptools-0.6c11.tar.gzPylint 官网  下载相关源码  http://www.pylint.org/#install安装python3.4sudo add-apt-repository ppa:fkrull/deadsnakessudo apt-get updatesudo apt-get install python3.4参考： Ubuntu下安装Python3.4             http://blog.sina.com.cn/s/blog_7cdaf8b60102vf2b.html注意：python3.4不能安装，安装后也不可切换为3.4，否则会照成展讯代码编译不通过。编译vim74cd vim  ./configure --with-features=huge \  --enable-rubyinterp=yes \  --enable-pythoninterp=yes \  --enable-python3interp=yes \  --enable-perlinterp=yes \  --enable-luainterp=yes \  --enable-gui=gtk2 --enable-cscope --prefix=/usr  sudo make VIMRUNTIMEDIR=/usr/share/vim/vim74  sudo make install  经以上步骤，VIM74 安装成功Linux中源码安装编译Vim   http://www.linuxidc.com/Linux/2014-04/99717.htmVIM官网：    http://www.vim.org/download.php#unix出现错误，在vim 底行模式输入 ：message 可以查看错误信息
+
+安装配置VIM  YouCompleteMe 插件，参考网址：
+百度文库：vim智能补全插件YouCompleteMe新手完全攻略       http://tieba.baidu.com/p/2672605209#40873390993l
+Vim 自动补全插件 YouCompleteMe 安装与配置    http://howiefh.github.io/2015/05/22/vim-install-youcompleteme-plugin/   （提示python版本低的时候需要查看这个，进行编译。）
+
+YouComplereMe 会安装libclang，安装在：/tmp/ycm_build.DLEb09/clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04/lib/libclang.so.3.8
+安装YouComplereMe 时，需使用   YCM_CORES=1 ./install.sh  --clang-completer  来编译。
+cmake的版本太低，系统自带的cmake才2.6，更新到cmake2.8.    http://luochunfeng163.blog.163.com/blog/static/1670092492014519105312792/
+安装后，发现我的vim版本太低，不能满足需求，升级IVM。
+    在百度找答案，发现有vim74压缩包，下载，解压。vim-7.4.tar.bz2
+Ubuntu12.04安装YouCompleteMe插件   http://blog.csdn.net/unhappypeople/article/details/19160243 
+
+ImportError: No module named setuptools 解决方法      shell# wget http://pypi.python.org/packages/source/s/setuptools/setuptools-0.6c11.tar.gz
+Pylint 官网  下载相关源码  http://www.pylint.org/#install
+安装python3.4
+sudo add-apt-repository ppa:fkrull/deadsnakes
+sudo apt-get update
+sudo apt-get install python3.4
+参考： Ubuntu下安装Python3.4             http://blog.sina.com.cn/s/blog_7cdaf8b60102vf2b.html     
+注意：python3.4不能安装，安装后也不可切换为3.4，否则会照成展讯代码编译不通过。
+
+编译vim74
+        cd vim  
+./configure --with-features=huge \  
+            --enable-rubyinterp=yes \  
+            --enable-pythoninterp=yes \  
+            --enable-python3interp=yes \  
+            --enable-perlinterp=yes \  
+            --enable-luainterp=yes \  
+            --enable-gui=gtk2 --enable-cscope --prefix=/usr  
+sudo make VIMRUNTIMEDIR=/usr/share/vim/vim74  
+sudo make install  
+
+经以上步骤，VIM74 安装成功
+
+Linux中源码安装编译Vim   http://www.linuxidc.com/Linux/2014-04/99717.htm
+VIM官网：    http://www.vim.org/download.php#unix 
+
+出现错误，在vim 底行模式输入 ：message 可以查看错误信息
+
+遇见问题，百度找答案。
