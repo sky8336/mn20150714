@@ -1,37 +1,37 @@
-°²×°·½Ê½£º
-(1) ÏÈÔÚ.vimrcÖĞ ×¢ÊÍ ervandew/supertab¡¢AutoComplPop
-(2) ÔÚ.vimrcÖĞÌí¼Ó£º
+å®‰è£…æ–¹å¼ï¼š
+(1) å…ˆåœ¨.vimrcä¸­ æ³¨é‡Š ervandew/supertabã€AutoComplPop
+(2) åœ¨.vimrcä¸­æ·»åŠ ï¼š
 	valloric/YouComleteMe
 	valloric/ListToggle
-    //´ò¿ªvi¡£ÔÚµ×ĞĞÊäÈëBundleInstallÀ´°²×°²å¼ş
+    //æ‰“å¼€viã€‚åœ¨åº•è¡Œè¾“å…¥BundleInstallæ¥å®‰è£…æ’ä»¶
 
-(3) °²×°cmake 2.8£¬
-   ½âÑ¹Ëõ£¬½øÈëÄ¿Â¼£¬°´Ë³ĞòÖ´ĞĞ
+(3) å®‰è£…cmake 2.8ï¼Œ
+   è§£å‹ç¼©ï¼Œè¿›å…¥ç›®å½•ï¼ŒæŒ‰é¡ºåºæ‰§è¡Œ
    ./configure
     make
 	make install
-(4)½øÈë./vim/bunle/YouCompleteMeÄ¿Â¼£¬Ö´ĞĞ
+(4)è¿›å…¥./vim/bunle/YouCompleteMeç›®å½•ï¼Œæ‰§è¡Œ
 	YCM_CORES=1 ./install.sh --clang-completer
-	ps:	´ËÃüÁîÎªÌí¼ÓC¼Ò×åÓïÒåÖ§³Ö,Ã»ÓĞºóÃæÁ½¸ö²ÎÊı½«²»Ö§³ÖC¼Ò×åÓïÒå.
-	YCM_CORES=1  ÓÃÓÚ½â¾ö³öÏÖThe ycmd server SHUT DOWN (restart with ':YcmRestartServer'). Unexpected error while loading the YCM core library. Run ':YcmToggleLogs stderr' to check the logs.´íÎó
+	ps:	æ­¤å‘½ä»¤ä¸ºæ·»åŠ Cå®¶æ—è¯­ä¹‰æ”¯æŒ,æ²¡æœ‰åé¢ä¸¤ä¸ªå‚æ•°å°†ä¸æ”¯æŒCå®¶æ—è¯­ä¹‰.
+	YCM_CORES=1  ç”¨äºè§£å†³å‡ºç°The ycmd server SHUT DOWN (restart with ':YcmRestartServer'). Unexpected error while loading the YCM core library. Run ':YcmToggleLogs stderr' to check the logs.é”™è¯¯
 
-(5) ÔÚ.vimrcÖĞÌí¼Ó£º
+(5) åœ¨.vimrcä¸­æ·»åŠ ï¼š
 "YouComleteMe.vim
 let g:ycm_global_ycn_extra_conf='~/.vim/bundle/YouCompleteMe/Third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
-set completeopt=longest,menu    "ÈÃVimµÄ²¹È«²Ëµ¥ĞĞÎªÓëÒ»°ãIDEÒ»ÖÂ(²Î¿¼VimTip1228)
-autocmd InsertLeave * if pumvisible() == 0|pclose|endif    "Àë¿ª²åÈëÄ£Ê½ºó×Ô¶¯¹Ø±ÕÔ¤ÀÀ´°¿Ú
-inoremap <expr> <CR>       pumvisible() ? "\<C-y>" : "\<CR>"    "»Ø³µ¼´Ñ¡ÖĞµ±Ç°Ïî
-"ÉÏÏÂ×óÓÒ¼üµÄĞĞÎª »áÏÔÊ¾ÆäËûĞÅÏ¢
+set completeopt=longest,menu    "è®©Vimçš„è¡¥å…¨èœå•è¡Œä¸ºä¸ä¸€èˆ¬IDEä¸€è‡´(å‚è€ƒVimTip1228)
+autocmd InsertLeave * if pumvisible() == 0|pclose|endif    "ç¦»å¼€æ’å…¥æ¨¡å¼åè‡ªåŠ¨å…³é—­é¢„è§ˆçª—å£
+inoremap <expr> <CR>       pumvisible() ? "\<C-y>" : "\<CR>"    "å›è½¦å³é€‰ä¸­å½“å‰é¡¹
+"ä¸Šä¸‹å·¦å³é”®çš„è¡Œä¸º ä¼šæ˜¾ç¤ºå…¶ä»–ä¿¡æ¯
 inoremap <expr> <Down>     pumvisible() ? "\<C-n>" : "\<Down>"
 inoremap <expr> <Up>       pumvisible() ? "\<C-p>" : "\<Up>"
 inoremap <expr> <PageDown> pumvisible() ? "\<PageDown>\<C-p>\<C-n>" : "\<PageDown>"
 inoremap <expr> <PageUp>   pumvisible() ? "\<PageUp>\<C-p>\<C-n>" : "\<PageUp>"
-" Ìø×ªµ½¶¨Òå´¦
+" è·³è½¬åˆ°å®šä¹‰å¤„
 nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 "nnoremap <F6> :YcmForceCompileAndDiagnostics<CR>    "force recomile with syntastic
 " nnoremap <leader>lo :lopen<CR>    "open locationlist
 " nnoremap <leader>lc :lclose<CR>    "close locationlist
-"YCM ¼¯³ÉOmniCppComplete ²¹È«ÒıÇæ£¬ÉèÖÃÆä¿ì½İ¼ü
+"YCM é›†æˆOmniCppComplete è¡¥å…¨å¼•æ“ï¼Œè®¾ç½®å…¶å¿«æ·é”®
 inoremap <leader>; <C-x><C-o>
 
 let g:ycm_path_to_python_interpreter='/usr/bin/python'
@@ -40,56 +40,56 @@ let g:ycm_server_log_level='debug'
 
 
 "let g:ycm_global_ycm_extra_conf = '~/.vim/data/ycm/.ycm_extra_conf.py'
-" ²»ÏÔÊ¾¿ªÆôvimÊ±¼ì²éycm_extra_conf.pyÎÄ¼şµÄĞÅÏ¢
+" ä¸æ˜¾ç¤ºå¼€å¯vimæ—¶æ£€æŸ¥ycm_extra_conf.pyæ–‡ä»¶çš„ä¿¡æ¯
 let g:ycm_confirm_extra_conf=0
-" ¿ªÆô»ùÓÚtagµÄ²¹È«£¬¿ÉÒÔÔÚÕâÖ®ºóÌí¼ÓĞèÒªµÄ±êÇ©Â·¾¶
+" å¼€å¯åŸºäºtagçš„è¡¥å…¨ï¼Œå¯ä»¥åœ¨è¿™ä¹‹åæ·»åŠ éœ€è¦çš„æ ‡ç­¾è·¯å¾„
 let g:ycm_collect_identifiers_from_tags_files=1
-"×¢ÊÍºÍ×Ö·û´®ÖĞµÄÎÄ×ÖÒ²»á±»ÊÕÈë²¹È«
+"æ³¨é‡Šå’Œå­—ç¬¦ä¸²ä¸­çš„æ–‡å­—ä¹Ÿä¼šè¢«æ”¶å…¥è¡¥å…¨
 let g:ycm_collect_identifiers_from_comments_and_strings = 0
-"²¹È«ÄÚÈİ²»ÒÔ·Ö¸î´°¿ÚĞÎËÆÏÔÊ¾£¬Ö»ÏÔÊ¾²¹È«ÁĞ±í
+"è¡¥å…¨å†…å®¹ä¸ä»¥åˆ†å‰²çª—å£å½¢ä¼¼æ˜¾ç¤ºï¼Œåªæ˜¾ç¤ºè¡¥å…¨åˆ—è¡¨
 "let completeopt-=preview
-" ÊäÈëµÚ2¸ö×Ö·û¿ªÊ¼²¹È«
+" è¾“å…¥ç¬¬2ä¸ªå­—ç¬¦å¼€å§‹è¡¥å…¨
 let g:ycm_min_num_of_chars_for_completion=2
-" ½ûÖ¹»º´æÆ¥ÅäÏî,Ã¿´Î¶¼ÖØĞÂÉú³ÉÆ¥ÅäÏî
+" ç¦æ­¢ç¼“å­˜åŒ¹é…é¡¹,æ¯æ¬¡éƒ½é‡æ–°ç”ŸæˆåŒ¹é…é¡¹
 let g:ycm_cache_omnifunc=0
-" ¿ªÆôÓïÒå²¹È«
+" å¼€å¯è¯­ä¹‰è¡¥å…¨
 let g:ycm_seed_identifiers_with_syntax=1
-"ÔÚ×¢ÊÍÊäÈëÖĞÒ²ÄÜ²¹È«
+"åœ¨æ³¨é‡Šè¾“å…¥ä¸­ä¹Ÿèƒ½è¡¥å…¨
 let g:ycm_complete_in_comments = 1
-"ÔÚ×Ö·û´®ÊäÈëÖĞÒ²ÄÜ²¹È«
+"åœ¨å­—ç¬¦ä¸²è¾“å…¥ä¸­ä¹Ÿèƒ½è¡¥å…¨
 let g:ycm_complete_in_strings = 1
-" ÉèÖÃÔÚÏÂÃæ¼¸ÖÖ¸ñÊ½µÄÎÄ¼şÉÏÆÁ±Îycm
+" è®¾ç½®åœ¨ä¸‹é¢å‡ ç§æ ¼å¼çš„æ–‡ä»¶ä¸Šå±è”½ycm
 let g:ycm_filetype_blacklist = {
             \ 'tagbar' : 1,
             \ 'nerdtree' : 1,
             \}
 
-¼´¿É¡£
+å³å¯ã€‚
 	(6)
-Ä¿Ç°£¬ÓÉÓÚÏµÍ³ .soÎÄ¼şÎÊÌâ£¬×Ô¶¯²¹È«²»ÄÜ¹»Ê¹ÓÃ£¬µ«ÊÇÊäÈëµ¥´Êºó£¬¹â±êÇ°ÒÆÒ»Î»£¬°´ÏÂ Ctrl + n ¿ÉÒÔµ¯³ö²¹È«Ñ¡Ïî£¬ÄÜ¹»²¹È«¹Ø¼ü×Ö
-ÊäÈëº¯ÊıÊ±£¬°´ÏÂ , + ; £¬¿ÉÒÔµ¯³öº¯Êı²¹È«Ñ¡Ïî¡£
+ç›®å‰ï¼Œç”±äºç³»ç»Ÿ .soæ–‡ä»¶é—®é¢˜ï¼Œè‡ªåŠ¨è¡¥å…¨ä¸èƒ½å¤Ÿä½¿ç”¨ï¼Œä½†æ˜¯è¾“å…¥å•è¯åï¼Œå…‰æ ‡å‰ç§»ä¸€ä½ï¼ŒæŒ‰ä¸‹ Ctrl + n å¯ä»¥å¼¹å‡ºè¡¥å…¨é€‰é¡¹ï¼Œèƒ½å¤Ÿè¡¥å…¨å…³é”®å­—
+è¾“å…¥å‡½æ•°æ—¶ï¼ŒæŒ‰ä¸‹ , + ; ï¼Œå¯ä»¥å¼¹å‡ºå‡½æ•°è¡¥å…¨é€‰é¡¹ã€‚
 
-°²×°ÅäÖÃVIM  YouCompleteMe ²å¼ş£¬²Î¿¼ÍøÖ·£º
-°Ù¶ÈÎÄ¿â£ºvimÖÇÄÜ²¹È«²å¼şYouCompleteMeĞÂÊÖÍêÈ«¹¥ÂÔ       http://tieba.baidu.com/p/2672605209#40873390993l
-Vim ×Ô¶¯²¹È«²å¼ş YouCompleteMe °²×°ÓëÅäÖÃ    http://howiefh.github.io/2015/05/22/vim-install-youcompleteme-plugin/   £¨ÌáÊ¾python°æ±¾µÍµÄÊ±ºòĞèÒª²é¿´Õâ¸ö£¬½øĞĞ±àÒë¡££©
+å®‰è£…é…ç½®VIM  YouCompleteMe æ’ä»¶ï¼Œå‚è€ƒç½‘å€ï¼š
+ç™¾åº¦æ–‡åº“ï¼švimæ™ºèƒ½è¡¥å…¨æ’ä»¶YouCompleteMeæ–°æ‰‹å®Œå…¨æ”»ç•¥       http://tieba.baidu.com/p/2672605209#40873390993l
+Vim è‡ªåŠ¨è¡¥å…¨æ’ä»¶ YouCompleteMe å®‰è£…ä¸é…ç½®    http://howiefh.github.io/2015/05/22/vim-install-youcompleteme-plugin/   ï¼ˆæç¤ºpythonç‰ˆæœ¬ä½çš„æ—¶å€™éœ€è¦æŸ¥çœ‹è¿™ä¸ªï¼Œè¿›è¡Œç¼–è¯‘ã€‚ï¼‰
 
-YouComplereMe »á°²×°libclang£¬°²×°ÔÚ£º/tmp/ycm_build.DLEb09/clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04/lib/libclang.so.3.8
-°²×°YouComplereMe Ê±£¬ĞèÊ¹ÓÃ   YCM_CORES=1 ./install.sh  --clang-completer  À´±àÒë¡£
-cmakeµÄ°æ±¾Ì«µÍ£¬ÏµÍ³×Ô´øµÄcmake²Å2.6£¬¸üĞÂµ½cmake2.8.    http://luochunfeng163.blog.163.com/blog/static/1670092492014519105312792/
-°²×°ºó£¬·¢ÏÖÎÒµÄvim°æ±¾Ì«µÍ£¬²»ÄÜÂú×ãĞèÇó£¬Éı¼¶IVM¡£
-    ÔÚ°Ù¶ÈÕÒ´ğ°¸£¬·¢ÏÖÓĞvim74Ñ¹Ëõ°ü£¬ÏÂÔØ£¬½âÑ¹¡£vim-7.4.tar.bz2
-Ubuntu12.04°²×°YouCompleteMe²å¼ş   http://blog.csdn.net/unhappypeople/article/details/19160243 
+YouComplereMe ä¼šå®‰è£…libclangï¼Œå®‰è£…åœ¨ï¼š/tmp/ycm_build.DLEb09/clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04/lib/libclang.so.3.8
+å®‰è£…YouComplereMe æ—¶ï¼Œéœ€ä½¿ç”¨   YCM_CORES=1 ./install.sh  --clang-completer  æ¥ç¼–è¯‘ã€‚
+cmakeçš„ç‰ˆæœ¬å¤ªä½ï¼Œç³»ç»Ÿè‡ªå¸¦çš„cmakeæ‰2.6ï¼Œæ›´æ–°åˆ°cmake2.8.    http://luochunfeng163.blog.163.com/blog/static/1670092492014519105312792/
+å®‰è£…åï¼Œå‘ç°æˆ‘çš„vimç‰ˆæœ¬å¤ªä½ï¼Œä¸èƒ½æ»¡è¶³éœ€æ±‚ï¼Œå‡çº§IVMã€‚
+    åœ¨ç™¾åº¦æ‰¾ç­”æ¡ˆï¼Œå‘ç°æœ‰vim74å‹ç¼©åŒ…ï¼Œä¸‹è½½ï¼Œè§£å‹ã€‚vim-7.4.tar.bz2
+Ubuntu12.04å®‰è£…YouCompleteMeæ’ä»¶   http://blog.csdn.net/unhappypeople/article/details/19160243 
 
-ImportError: No module named setuptools ½â¾ö·½·¨      shell# wget http://pypi.python.org/packages/source/s/setuptools/setuptools-0.6c11.tar.gz
-Pylint ¹ÙÍø  ÏÂÔØÏà¹ØÔ´Âë  http://www.pylint.org/#install
-°²×°python3.4
+ImportError: No module named setuptools è§£å†³æ–¹æ³•      shell# wget http://pypi.python.org/packages/source/s/setuptools/setuptools-0.6c11.tar.gz
+Pylint å®˜ç½‘  ä¸‹è½½ç›¸å…³æºç   http://www.pylint.org/#install
+å®‰è£…python3.4
 sudo add-apt-repository ppa:fkrull/deadsnakes
 sudo apt-get update
 sudo apt-get install python3.4
-²Î¿¼£º UbuntuÏÂ°²×°Python3.4             http://blog.sina.com.cn/s/blog_7cdaf8b60102vf2b.html     
-×¢Òâ£ºpython3.4²»ÄÜ°²×°£¬°²×°ºóÒ²²»¿ÉÇĞ»»Îª3.4£¬·ñÔò»áÕÕ³ÉÕ¹Ñ¶´úÂë±àÒë²»Í¨¹ı¡£
+å‚è€ƒï¼š Ubuntuä¸‹å®‰è£…Python3.4             http://blog.sina.com.cn/s/blog_7cdaf8b60102vf2b.html     
+æ³¨æ„ï¼špython3.4ä¸èƒ½å®‰è£…ï¼Œå®‰è£…åä¹Ÿä¸å¯åˆ‡æ¢ä¸º3.4ï¼Œå¦åˆ™ä¼šç…§æˆå±•è®¯ä»£ç ç¼–è¯‘ä¸é€šè¿‡ã€‚
 
-±àÒëvim74
+ç¼–è¯‘vim74
         cd vim  
 ./configure --with-features=huge \  
             --enable-rubyinterp=yes \  
@@ -101,11 +101,11 @@ sudo apt-get install python3.4
 sudo make VIMRUNTIMEDIR=/usr/share/vim/vim74  
 sudo make install  
 
-¾­ÒÔÉÏ²½Öè£¬VIM74 °²×°³É¹¦
+ç»ä»¥ä¸Šæ­¥éª¤ï¼ŒVIM74 å®‰è£…æˆåŠŸ
 
-LinuxÖĞÔ´Âë°²×°±àÒëVim   http://www.linuxidc.com/Linux/2014-04/99717.htm
-VIM¹ÙÍø£º    http://www.vim.org/download.php#unix 
+Linuxä¸­æºç å®‰è£…ç¼–è¯‘Vim   http://www.linuxidc.com/Linux/2014-04/99717.htm
+VIMå®˜ç½‘ï¼š    http://www.vim.org/download.php#unix 
 
-³öÏÖ´íÎó£¬ÔÚvim µ×ĞĞÄ£Ê½ÊäÈë £ºmessage ¿ÉÒÔ²é¿´´íÎóĞÅÏ¢
+å‡ºç°é”™è¯¯ï¼Œåœ¨vim åº•è¡Œæ¨¡å¼è¾“å…¥ ï¼šmessage å¯ä»¥æŸ¥çœ‹é”™è¯¯ä¿¡æ¯
 
-Óö¼ûÎÊÌâ£¬°Ù¶ÈÕÒ´ğ°¸¡£
+é‡è§é—®é¢˜ï¼Œç™¾åº¦æ‰¾ç­”æ¡ˆã€‚
