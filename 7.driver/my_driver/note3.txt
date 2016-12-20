@@ -1,0 +1,34 @@
+【1】int  open(struct inode *inode,struct file *file)
+
+	参数：对应的inode结构体，inode用来描述文件的信息,(文件的属性，文件的类型)
+
+	      file结构体
+
+		  作用：识别次设备号
+		        初始化
+				文件打开的次数
+
+
+
+【2】ssize_t read(struct file *file,_char _user buff,ssize  size,loff_t loff)
+
+    参数：file结构体
+	      buff：从驱动层传递到用户层
+		  __user:用户的数据
+		  size：读数据的大小
+		  loff： 偏移量
+
+【3】用户和内核 传递数据
+   
+
+   1.copy_to_user(to,from,n);
+	参数  to:用户空间
+	     from：内核空间
+		 n：从内核空间拷贝的字节数
+    返回值：成功返回0，失败返回未读取的数据
+
+
+	注意：应用程序open会调用底层驱动open,当应用程序退出，驱动会自动执行release
+	函数；如果应用程序不退出，驱动不会执行release函数；
+
+

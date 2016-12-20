@@ -1,0 +1,150 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+CMD_SIZE	m25p10a.c	78;"	d	file:
+DEVICE_ID	m25p10a.c	81;"	d	file:
+FLASH_PAGESIZE	m25p10a.c	51;"	d	file:
+KERNELDIR	Makefile	/^KERNELDIR ?= \/home\/farsight\/test_kernel\/android-2.6.29-samsung $/;"	m
+MANUFACTURER_ID	m25p10a.c	80;"	d	file:
+MAX_READY_WAIT_COUNT	m25p10a.c	77;"	d	file:
+OPCODE_BE_32K	m25p10a.c	62;"	d	file:
+OPCODE_BE_4K	m25p10a.c	61;"	d	file:
+OPCODE_CHIP_ERASE	m25p10a.c	63;"	d	file:
+OPCODE_FAST_READ	m25p10a.c	59;"	d	file:
+OPCODE_NORM_READ	m25p10a.c	58;"	d	file:
+OPCODE_PP	m25p10a.c	60;"	d	file:
+OPCODE_RDID	m25p10a.c	65;"	d	file:
+OPCODE_RDSR	m25p10a.c	56;"	d	file:
+OPCODE_SE	m25p10a.c	64;"	d	file:
+OPCODE_WRDA	m25p10a.c	55;"	d	file:
+OPCODE_WREN	m25p10a.c	54;"	d	file:
+OPCODE_WRSR	m25p10a.c	57;"	d	file:
+PWD	Makefile	/^PWD := $(shell pwd)$/;"	m
+RXBUSY	spi_s3c64xx.h	102;"	d
+RX_FIFO_LVL	spi_s3c64xx.h	91;"	d
+S3C64XX_SPI_ACT	spi_s3c64xx.h	44;"	d
+S3C64XX_SPI_CH_CFG	spi_s3c64xx.h	3;"	d
+S3C64XX_SPI_CH_HS_EN	spi_s3c64xx.h	16;"	d
+S3C64XX_SPI_CH_RXCH_ON	spi_s3c64xx.h	21;"	d
+S3C64XX_SPI_CH_SLAVE	spi_s3c64xx.h	18;"	d
+S3C64XX_SPI_CH_SW_RST	spi_s3c64xx.h	17;"	d
+S3C64XX_SPI_CH_TXCH_ON	spi_s3c64xx.h	22;"	d
+S3C64XX_SPI_CLKSEL_SRCMSK	spi_s3c64xx.h	24;"	d
+S3C64XX_SPI_CLKSEL_SRCSHFT	spi_s3c64xx.h	25;"	d
+S3C64XX_SPI_CLK_CFG	spi_s3c64xx.h	4;"	d
+S3C64XX_SPI_CPHA_B	spi_s3c64xx.h	20;"	d
+S3C64XX_SPI_CPOL_L	spi_s3c64xx.h	19;"	d
+S3C64XX_SPI_DEACT	spi_s3c64xx.h	46;"	d
+S3C64XX_SPI_ENCLK_ENABLE	spi_s3c64xx.h	26;"	d
+S3C64XX_SPI_FBCLK_MSK	spi_s3c64xx.h	81;"	d
+S3C64XX_SPI_FB_CLK	spi_s3c64xx.h	14;"	d
+S3C64XX_SPI_INT_EN	spi_s3c64xx.h	7;"	d
+S3C64XX_SPI_INT_RX_FIFORDY_EN	spi_s3c64xx.h	54;"	d
+S3C64XX_SPI_INT_RX_OVERRUN_EN	spi_s3c64xx.h	50;"	d
+S3C64XX_SPI_INT_RX_UNDERRUN_EN	spi_s3c64xx.h	51;"	d
+S3C64XX_SPI_INT_TRAILING_EN	spi_s3c64xx.h	49;"	d
+S3C64XX_SPI_INT_TX_FIFORDY_EN	spi_s3c64xx.h	55;"	d
+S3C64XX_SPI_INT_TX_OVERRUN_EN	spi_s3c64xx.h	52;"	d
+S3C64XX_SPI_INT_TX_UNDERRUN_EN	spi_s3c64xx.h	53;"	d
+S3C64XX_SPI_MAX_TRAILCNT	spi_s3c64xx.h	93;"	d
+S3C64XX_SPI_MODE_4BURST	spi_s3c64xx.h	39;"	d
+S3C64XX_SPI_MODE_BUS_TSZ_BYTE	spi_s3c64xx.h	33;"	d
+S3C64XX_SPI_MODE_BUS_TSZ_HALFWORD	spi_s3c64xx.h	34;"	d
+S3C64XX_SPI_MODE_BUS_TSZ_MASK	spi_s3c64xx.h	36;"	d
+S3C64XX_SPI_MODE_BUS_TSZ_WORD	spi_s3c64xx.h	35;"	d
+S3C64XX_SPI_MODE_CFG	spi_s3c64xx.h	5;"	d
+S3C64XX_SPI_MODE_CH_TSZ_BYTE	spi_s3c64xx.h	29;"	d
+S3C64XX_SPI_MODE_CH_TSZ_HALFWORD	spi_s3c64xx.h	30;"	d
+S3C64XX_SPI_MODE_CH_TSZ_MASK	spi_s3c64xx.h	32;"	d
+S3C64XX_SPI_MODE_CH_TSZ_WORD	spi_s3c64xx.h	31;"	d
+S3C64XX_SPI_MODE_RXDMA_ON	spi_s3c64xx.h	37;"	d
+S3C64XX_SPI_MODE_TXDMA_ON	spi_s3c64xx.h	38;"	d
+S3C64XX_SPI_PACKET_CNT	spi_s3c64xx.h	11;"	d
+S3C64XX_SPI_PACKET_CNT_EN	spi_s3c64xx.h	64;"	d
+S3C64XX_SPI_PENDING_CLR	spi_s3c64xx.h	12;"	d
+S3C64XX_SPI_PND_RX_OVERRUN_CLR	spi_s3c64xx.h	69;"	d
+S3C64XX_SPI_PND_RX_UNDERRUN_CLR	spi_s3c64xx.h	68;"	d
+S3C64XX_SPI_PND_TRAILING_CLR	spi_s3c64xx.h	70;"	d
+S3C64XX_SPI_PND_TX_OVERRUN_CLR	spi_s3c64xx.h	67;"	d
+S3C64XX_SPI_PND_TX_UNDERRUN_CLR	spi_s3c64xx.h	66;"	d
+S3C64XX_SPI_PSR_MASK	spi_s3c64xx.h	27;"	d
+S3C64XX_SPI_RX_DATA	spi_s3c64xx.h	10;"	d
+S3C64XX_SPI_SLAVE_AUTO	spi_s3c64xx.h	41;"	d
+S3C64XX_SPI_SLAVE_SEL	spi_s3c64xx.h	6;"	d
+S3C64XX_SPI_SLAVE_SIG_INACT	spi_s3c64xx.h	42;"	d
+S3C64XX_SPI_STATUS	spi_s3c64xx.h	8;"	d
+S3C64XX_SPI_ST_RX_FIFORDY	spi_s3c64xx.h	61;"	d
+S3C64XX_SPI_ST_RX_OVERRUN_ERR	spi_s3c64xx.h	57;"	d
+S3C64XX_SPI_ST_RX_UNDERRUN_ERR	spi_s3c64xx.h	58;"	d
+S3C64XX_SPI_ST_TRLCNTZ	spi_s3c64xx.h	83;"	d
+S3C64XX_SPI_ST_TX_DONE	spi_s3c64xx.h	87;"	d
+S3C64XX_SPI_ST_TX_FIFORDY	spi_s3c64xx.h	62;"	d
+S3C64XX_SPI_ST_TX_OVERRUN_ERR	spi_s3c64xx.h	59;"	d
+S3C64XX_SPI_ST_TX_UNDERRUN_ERR	spi_s3c64xx.h	60;"	d
+S3C64XX_SPI_SWAP_CFG	spi_s3c64xx.h	13;"	d
+S3C64XX_SPI_SWAP_RX_BIT	spi_s3c64xx.h	74;"	d
+S3C64XX_SPI_SWAP_RX_BYTE	spi_s3c64xx.h	73;"	d
+S3C64XX_SPI_SWAP_RX_EN	spi_s3c64xx.h	75;"	d
+S3C64XX_SPI_SWAP_RX_HALF_WORD	spi_s3c64xx.h	72;"	d
+S3C64XX_SPI_SWAP_TX_BIT	spi_s3c64xx.h	78;"	d
+S3C64XX_SPI_SWAP_TX_BYTE	spi_s3c64xx.h	77;"	d
+S3C64XX_SPI_SWAP_TX_EN	spi_s3c64xx.h	79;"	d
+S3C64XX_SPI_SWAP_TX_HALF_WORD	spi_s3c64xx.h	76;"	d
+S3C64XX_SPI_TRAILCNT	spi_s3c64xx.h	96;"	d
+S3C64XX_SPI_TRAILCNT_OFF	spi_s3c64xx.h	94;"	d
+S3C64XX_SPI_TX_DATA	spi_s3c64xx.h	9;"	d
+SPIBUSY	spi_s3c64xx.h	101;"	d
+SR_BP0	m25p10a.c	71;"	d	file:
+SR_BP1	m25p10a.c	72;"	d	file:
+SR_BP2	m25p10a.c	73;"	d	file:
+SR_SRWD	m25p10a.c	74;"	d	file:
+SR_WEL	m25p10a.c	69;"	d	file:
+SR_WIP	m25p10a.c	68;"	d	file:
+SUSPND	spi_s3c64xx.h	100;"	d
+TXBUSY	spi_s3c64xx.h	103;"	d
+TX_FIFO_LVL	spi_s3c64xx.h	90;"	d
+basic_spi_cfg	m25p10a.c	/^static void basic_spi_cfg( void )$/;"	f	file:
+buf	flash_test.c	/^	unsigned char *buf;$/;"	m	struct:m25p10a_ops	file:
+buf	m25p10a.c	/^	unsigned char *buf;$/;"	m	struct:m25p10a_ops	file:
+check_flash_id	m25p10a.c	/^static void check_flash_id( void )$/;"	f	file:
+disable_chip	m25p10a.c	/^static void disable_chip( void )$/;"	f	file:
+disable_clk2slave	m25p10a.c	/^static void disable_clk2slave( void )$/;"	f	file:
+enable_chip	m25p10a.c	/^static void enable_chip( void )$/;"	f	file:
+enable_clk2slave	m25p10a.c	/^static void enable_clk2slave( void )$/;"	f	file:
+erase_chip	m25p10a.c	/^static void erase_chip( void )$/;"	f	file:
+flash_cleanup	m25p10a.c	/^module_exit( flash_cleanup );$/;"	v
+flash_cleanup	m25p10a.c	/^static void flash_cleanup(void)$/;"	f	file:
+flash_init	m25p10a.c	/^module_init( flash_init );$/;"	v
+flash_init	m25p10a.c	/^static int flash_init(void)$/;"	f	file:
+flash_major	m25p10a.c	/^static int flash_major = 0;$/;"	v	file:
+flash_ops	m25p10a.c	/^static struct file_operations flash_ops = {$/;"	v	typeref:struct:file_operations	file:
+flash_read	m25p10a.c	/^static void flash_read( loff_t from, size_t len, unsigned char * buf )$/;"	f	file:
+flash_write	m25p10a.c	/^static void flash_write( loff_t to, size_t len, unsigned char * buf )$/;"	f	file:
+len	flash_test.c	/^	int len;$/;"	m	struct:m25p10a_ops	file:
+len	m25p10a.c	/^	int len;$/;"	m	struct:m25p10a_ops	file:
+m25p10a_close	m25p10a.c	/^static int m25p10a_close( struct inode *inode, struct file *filp )$/;"	f	file:
+m25p10a_ioctl	m25p10a.c	/^static int m25p10a_ioctl( struct inode *inode, struct file *filp, $/;"	f	file:
+m25p10a_open	m25p10a.c	/^static int m25p10a_open( struct inode *inode, struct file *filp )$/;"	f	file:
+m25p10a_ops	flash_test.c	/^struct m25p10a_ops {$/;"	s	file:
+m25p10a_ops	m25p10a.c	/^struct m25p10a_ops {$/;"	s	file:
+m25p10a_read	m25p10a.c	/^static ssize_t m25p10a_read( struct file *filp, char __user *buffer, $/;"	f	file:
+m25p10a_write	m25p10a.c	/^static ssize_t m25p10a_write( struct file *filp, char __user *buffer, $/;"	f	file:
+main	flash_test.c	/^main( int argc, char *argv[] )$/;"	f
+msecs_to_loops	spi_s3c64xx.h	98;"	d
+obj-m	Makefile	/^    obj-m := m25p10a.o$/;"	m
+read_sr	m25p10a.c	/^static void read_sr( void )$/;"	f	file:
+recv_data	m25p10a.c	/^static void recv_data( unsigned char *buf, int len )$/;"	f	file:
+sector_erase	m25p10a.c	/^static void sector_erase( loff_t addr )$/;"	f	file:
+spi0_reg_base	m25p10a.c	/^static void __iomem  *spi0_reg_base;$/;"	v	file:
+spi_cfg_gpio	m25p10a.c	/^static void spi_cfg_gpio( void )$/;"	f	file:
+spi_clk_enable	m25p10a.c	/^static int spi_clk_enable( void )$/;"	f	file:
+start	flash_test.c	/^	loff_t start;	\/\/ where to begin read or write$/;"	m	struct:m25p10a_ops	file:
+start	m25p10a.c	/^	loff_t start;	\/\/ where to begin read or write$/;"	m	struct:m25p10a_ops	file:
+transfer_data	m25p10a.c	/^static void transfer_data( unsigned char *buf, int len )$/;"	f	file:
+wait_till_write_finished	m25p10a.c	/^static void wait_till_write_finished( void )$/;"	f	file:
+write_disable	m25p10a.c	/^static void write_disable( void )$/;"	f	file:
+write_enable	m25p10a.c	/^static void write_enable( void )$/;"	f	file:
+write_sr	m25p10a.c	/^static void write_sr( unsigned char val )$/;"	f	file:

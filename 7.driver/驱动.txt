@@ -1,0 +1,791 @@
+【1】驱动open方法实现内容
+  （1）增加使用计数，检查错误
+  （2）申请资源
+  （3）识别次设备号，如果必要，更新f_op指针，分配并填写被置于filp->private_data的数据结构
+
+【2】驱动open方法实现流程
+（1）定义一个和ops里open函数指针同类型的函数，函数名自定义   
+    int  hello_open (struct inode *, struct file *)
+     {
+
+     //根据需求完成【1】的内容
+      return 0；//成功返回0，失败返回-错误码
+     }
+
+（2）将定义好的函数，赋值给ops里的open函数指针。
+     定义file_operations 
+     struct file_operations  hello_ops = {
+      .owner = THIS_MODULE,
+      .open = hello_open
+     };
+     或
+     hello_ops.open = hello_open;
+
+
+【3】驱动release方法实现流程
+（1）定义一个和ops里release函数指针同类型的函数，函数名自定义   
+    int  hello_close (struct inode *, struct file *)
+     {
+      //实现和open相反的工作
+      return 0；//成功返回0，失败返回-错误码
+     }
+
+（2）将定义好的函数，赋值给ops里的release函数指针。
+     定义file_operations 
+     struct file_operations  hello_ops = {
+      .owner = THIS_MODULE,
+      .open = hello_open,
+      .release =hello_close
+     };
+     或
+     hello_ops.release = hello_close;
+
+【4】应用层程序是如何调用底层程序
+   （1）应用层的open最终调用底层驱动的open 
+        应用层的close最终调用底层驱动的release
+
+   （2）应用层通过设备文件找到对应的驱动程序
+        1--创建设备文件  mknod  /dev/hello  c 250 0
+        2--删除设备文件  sudo rm  /dev/hello
+
+   （3）     int open(const char *pathname, int flags);
+                          |                     |
+     int  hello_close (struct inode *, struct file *)
+
+    struct inode ：在设备节点创建时创建，放在磁盘上，在设备文件第一次打开时加载到内核。
+                   inode来描述文件的静态属性。
+    truct file   ：每打开一次，内存中创建一个file结构体
+                   描述文件的动态属性
+           
+
+
+
+
+【5】驱动read方法实现流程
+（1）定义一个和ops里read函数指针同类型的函数，函数名自定义 
+    ssize_t hello_read (struct file* file,char *buf ,size_t conut,loff_t* off)
+     {
+ 	//1--查参
+        //2--向应用层空间写  copy_to_user(to,from,n)
+         return  n； //成功返回n=复制的字节数。失败返回n=-错误码  
+     }
+
+（2）unsigned long copy_to_user(void __user *to, const void *from, unsigned long n)
+ 功能：从内空间拷贝n个字节到应用层空间
+ 输入参数： to :应用层的buff地址--目的地址
+          from :驱动的的buff地址--源地址
+            n  :复制多少个字节
+ 返回值：成功返回0，失败返回没有成功复制的字节数
+ 注意： 1--copy_to_user函数执行失败，返回为真
+        2--copy_to_user函数，有可能引起睡眠，不能用在中断上下文 
+
+
+
+（3）将定义好的函数，赋值给ops里的read函数指针。
+     定义file_operations 
+     struct file_operations  hello_ops = {
+      .owner = THIS_MODULE,
+      .open = hello_open,
+      .release =hello_close,
+      .read = hello_read
+     };
+     或
+     hello_ops.read = hello_read;
+
+【6】驱动write方法实现流程
+（1）定义一个和ops里write函数指针同类型的函数，函数名自定义 
+    ssize_t hello_write (struct file* file,char *buf ,size_t conut,loff_t* off)
+     {
+ 	//1--查参
+        //2--从应用层空间读  copy_from_user(to,from,n)
+        return  n； //成功返回n=复制的字节数。失败返回n=-错误码 
+     }
+
+（2）unsigned long copy_from_user(void *to, const void __user *from, unsigned long n)
+ 
+功能：从用户空间拷贝n个字节到内核空间
+
+ 输入参数： to :驱动的buff地址--目的地址
+          from :用户空间的buff地址--源地址
+            n  :复制多少个字节
+ 返回值：成功返回0，失败返回没有成功复制的字节数
+
+ 注意： 1--copy_from_user函数执行失败，返回为真
+        2--copy_from_user函数，有可能引起睡眠，不能用在中断上下文 
+
+
+
+（3）将定义好的函数，赋值给ops里的write函数指针。
+     定义file_operations 
+     struct file_operations  hello_ops = {
+      .owner = THIS_MODULE,
+      .open = hello_open,
+      .release =hello_close,
+      .read = hello_read,
+      .write =hello_write,
+     };
+     或
+     hello_ops.write = hello_write;
+
+
+
+【7】驱动ioctl的实现
+（1）应用层ioctl
+       int ioctl(int fd, int cmd, ...);
+       函数功能：调用底层ioctl，对文件fd执行request命令
+       输入参数： fd:打开的设备文件的文件描述符
+                  cmd：要执行的命令
+                  ...: 可选参数，命令传参地址
+       返回值： 成功返回0，失败返回-1，并置errno
+
+
+
+（2）驱动层unlocked_ioctl
+ 1--定义一个和ops里unlocked_ioctl函数指针同类型的函数，函数名自定义 
+     	long  hello_ioctl (struct file *, unsigned int, unsigned long)
+        {
+	   //用分支语句，对命令的实现 （switch、if--else）
+        }
+ 2--将定义好的函数，赋值给ops里的unlocked_ioctl函数指针。
+     定义file_operations 
+     struct file_operations  hello_ops = {
+      .owner = THIS_MODULE,
+      .open = hello_open,
+      .release =hello_close,
+      .read = hello_read,
+      .write =hello_write,
+      .unlocked_ioctl = hello_ioctl;
+     };
+     或
+     hello_ops.unlocked_ioctl = hello_ioctl;
+
+（3）ioctl命令
+    1--ioctl命令实质：是一个32位无符号整数
+    2--cmd命令码格式
+      | 设备类型     | 序列号     | 方向   |数据尺寸|
+      |----------    |--------    |------  |--------|
+      | 8 bit        |  8 bit     |2 bit   |8~14 bit|
+
+      设备类型：8位，表示哪一种设备的命令
+      序列号  ：8位，这类设备中的哪一个命令
+      方向    ：2位，命令中数据传输方向 只读、只写、读写、不读不写
+      数据尺寸：14位，传输的数据的大小
+  
+   3--定义cmd命令：
+      用户空间与Linux内核中定义需一致，写在一个cmd有文件里，应用层和驱动分别包含该命令文件。
+      
+      a) 简单方法
+       int cmd = (设备类型 <<24)| (序列号<<16) | (方向<<14)|数据尺寸;
+      
+      b)使用内核提过的宏函数
+       _IO
+       _IOW
+       _IOR
+       _IOWR
+
+       _IO(type,nr)	
+           type :幻数（设备类型），8位，写一个字符  'l'
+           nr   :基数（序列号），8，用一个数字表示，习惯从1开始
+
+      #define  LED_ON  _IO('l',1)
+      #define  LED_OFF _IO('l',2)
+
+      _IOR(type,nr,size)
+          type  :幻数（设备类型），8位，写一个字符
+           nr   :基数（序列号），8，用一个数字表示，习惯从1开始
+         size   :数据的大小，传变量名或变量类型	
+
+      #define  SET_BAU  _IOW('b',1,unsigned int) 
+      #define  GET_BAU  _IOR('b',2,unsigned int) 
+      
+【8】识别次设备号
+
+  container_of(ptr,type,member)
+  功能：通过结构体成员获得结构体首地址
+  参数：
+    ptr ：结构体成员的首地址
+    type：结构体的类型
+    member：结构体成员的名称  
+
+  返回值：结构体的首地址
+
+流程：
+
+（0）驱动里定义设备结构体作为file的私有数据
+    struct hello_device
+	{
+	   cdev cdev；
+	   char  data [128];
+	}hello_device[2];
+
+    hello_device[0] 对应 设备0
+    hello_device[1] 对应 设备1
+
+（1）驱动的open函数里
+  int hello＿open　(struct inode*,struct file *)
+　｛
+	struct hello_device * dev = container_of(inode->i_cdev,struct hello_device,cdev);
+	file->private_data = dev;
+　　｝
+
+（2）在驱动的read函数里
+   ssize_t hello＿read(struct file*,char __user *buff,size_t count,loff_t*)
+   {
+	struct hello_device * dev = file->private_data;
+        //dev-->打开的设备结构体
+        copy_to_user(buff,dev->data,count);
+   }
+
+【9】并发控制
+（1）并发：多个进程同时执行。
+（2）并发优点：高效
+     并发缺点：可能存在多个进程，同时访问一种资源（不允许进程同时访问），多个进程竞争关系。
+（3）临界资源：不允许进程同时访问资源（寄存器，内存单元）
+（4）临界区  ：程序中访问临界资源的代码区。
+（5）并发的三种情况：（有可能产生竞争）
+       1--对称多处理器（SMP）的多个CPU  
+       2--进程和进程之间（抢占式内核）
+       3--进程和中断之间
+
+【10】互斥机制：一个时刻一个进程访问临界资源时，排斥其他进程，使其他进程不能访问临界资源。
+（1）中断屏蔽
+（2）原子操作
+（3）自旋锁 --- 重点
+（4）信号量 --- 重点
+
+【11】中断屏蔽
+（1）中断屏蔽：关闭当前cpu的中断
+（2）中断屏蔽的流程 
+     local_irq_disable() /* 屏蔽中断 */
+     . . .
+     critical section /* 临界区*/
+      . . .
+     local_irq_enable()  /* 开中断*/
+
+【12】原子操作
+（1）原子操作：不可以被分割（打断）的操作（程序）
+     实质：使用标志量。
+（2）原子操作的实现
+    1--定义原子变量    atomic_t  v ;
+    2--初始化原子变量   
+      void atomic_set(atomic_t *v, int i); /* 设置原子变量的值为i */
+      v = ATOMIC_INIT(0); /* 定义原子变量v并初始化为0 */
+
+    3--原子操作
+     操作和测试
+     int atomic_inc_and_test(atomic_t *v);
+     int atomic_dec_and_test(atomic_t *v);
+     int atomic_sub_and_test(int i, atomic_t *v);
+     上述操作对原子变量执行自增、自减和减操作后（注意没有加）测试其是否为0，为0返回true，否则返回false。
+    4--访问临界资源
+    5--原子操作（和3操作正好相反）
+【1】自旋锁
+ （1）锁：理解成令牌，尝试获得令牌，能够获得，访问临界资源
+                                    不能获得令牌，忙等待，直到获得令牌，访问临界资源
+      自旋：等待是忙等待
+ 
+ （2）自旋锁在不同系统中实现不一样
+      1--单核非抢占--- 空操作
+      2--单核抢占  --- 获得锁--关抢占  释放锁--开抢占
+      3--多核      --- 关抢占+ 自旋     开抢占+返回
+
+
+（3）自旋锁的使用流程
+     1--定义自旋锁
+        spinlock_t lock;
+     
+      2--初始化自旋锁
+        spin_lock_init(lock)；
+     
+      3--申请锁
+        spin_lock(lock)；如果能够立即获得锁，它就马上返回，否则，它将自旋在那里，直到获得锁
+     
+      4--访问临界资源
+     
+      5--释放锁
+        spin_unlock(lock)；
+
+（4）自旋锁使用需要注意：
+      1-- 获得锁的进程，占用锁的时间要尽量短，操作要尽量快
+      2-- 获得锁期间（临界区），不能有引起睡眠的语句
+
+（5）使用自旋锁实现设备只能被一个进程打开
+      1--只是用自旋锁--耗时不确定，违背（4）-1
+      2--自锁锁 + 标志量
+
+
+（6）自旋锁函数扩展：
+      1--spin_trylock(lock)
+        该宏尝试获得自旋锁lock，如果能立即获得锁，它获得锁并返回真，否则立即返回假
+     
+      2--获得锁期间，关闭所有中断，忽略期间所有中断
+        spin_lock_irq() = spin_lock() + local_irq_disable() 
+        spin_unlock_irq() = spin_unlock() + local_irq_enable()
+     
+      3--获得锁期间，关闭所有中断，延时处理期间所有中断  
+        spin_lock_irqsave() = spin_lock() + local_irq_save()  
+        spin_unlock_irqrestore() = spin_unlock() + local_irq_restore() 
+     
+      4--获得锁期间，关闭软件中断，能够相应硬件中断  
+        spin_lock_bh() = spin_lock() + local_bh_disable() 
+        spin_unlock_bh() = spin_unlock() + local_bh_enable() 
+
+【2】读写锁 :写写互斥、读写互斥、读读不互斥
+  
+1--读写锁实现流程：
+   （1）定义和初始化读写自旋锁
+        rwlock_t my_rwlock = RW_LOCK_UNLOCKED; /* 静态初始化 */ 
+        或
+        rwlock_t my_rwlock;
+        rwlock_init(&my_rwlock); /* 动态初始化 */
+    
+    临界区是读操作 
+    （2）申请读锁      
+         void read_lock(rwlock_t *lock);
+
+    （3）访问临界资源，进行读操作
+   
+    （4）释放读锁
+        void read_unlock(rwlock_t *lock)
+ 
+
+      
+    临界区是写操作 
+    （2）申请写锁      
+         void write_lock(rwlock_t *lock);
+
+    （3）访问临界资源，进行写操作
+   
+    （4）释放写锁
+         void write_lock(rwlock_t *lock);
+
+2--例子
+  rwlock_t lock;   /* 定义rwlock */ 
+  rwlock_init(&lock); /* 初始化rwlock */
+?
+   /* 读时获取锁*/
+   read_lock(&lock);
+   ...  /* 临界资源 */
+   read_unlock(&lock);
+?
+   /* 写时获取锁*/
+   write_lock_irqsave(&lock, flags);
+   ... /* 临界资源 */
+   write_unlock_irqrestore(&lock, flags)
+
+【3】顺序锁 写写互斥，读写不互斥、读读不互斥
+
+顺序锁实现流程 
+     （1）定义并出示化顺序锁   
+         seqlock_t mylock;
+         seqlock_init(&mylock);
+    
+  临界区是写操作
+      （2）申请写锁      
+         void write_seqlock(seqlock_t *lock);
+
+      （3）访问临界资源，进行写操作
+   
+      （4）释放写锁
+         void write_seqlock(seqlock_t *lock);
+   
+   临界区是读操作 
+       unsigned int seqnum；
+     do {
+         seqnum = read_seqbegin(&seqlock_a);
+          /* 读操作代码块 */
+          ...
+       } while (read_seqretry(&seqlock_a, seqnum));
+
+
+
+【4】信号量
+（1）信号量
+        请求资源：资源存在，获得资源，资源数-1
+                  资源部不存在，睡眠等待，直到获得资源
+
+（2）信号量实现流程
+    1--定义信号量
+       struct semaphore sem;
+
+    2-初始化信号量
+      void sema_init(struct semaphore *sem, int val);
+      #define init_MUTEX(sem)  sema_init(sem, 1)
+      #define init_MUTEX_LOCKED(sem)  sema_init(sem, 0)
+      DECLARE_MUTEX(name) 
+      DECLARE_MUTEX_LOCKED(name)
+  
+      sema_init(&sem,1);//一般初始化为1
+  
+   
+    3--申请信号量
+       void down(struct semaphore * sem);
+
+
+    4--临界区
+
+    5--释放信号量
+       void up(struct semaphore * sem);
+
+
+（3）信号量函数扩展
+     int down_interruptible(struct semaphore * sem);  不能获得资源睡眠等待，等待过程中能被信号唤醒，函数返回真。
+     int down_trylock(struct semaphore * sem);  不能获得资源，出错返回。
+
+   
+重点：
+【5】自旋锁和信号量对比
+                         自旋锁     vs    信号量
+不能获得                 忙等待           睡眠等待
+获得期间                  快速             任意
+获得期间能否使用睡眠语句  不能              能
+能否使用在中断上下文       能              不能
+
+   
+【6】读写信号量
+（1）定义和初始化读写信号量
+     struct rw_semaphore my_rws;  /*定义读写信号量*/
+     void init_rwsem(struct rw_semaphore *sem);  /*初始化读写信号量*/
+ 
+临界区是读操作 
+  （2）读信号量获取
+     void down_read(struct rw_semaphore *sem);
+     int down_read_trylock(struct rw_semaphore *sem);
+  （3）读信号量释放
+     void up_read(struct rw_semaphore *sem);
+
+ 临界区是写操作 
+  （2）写信号量获取
+     void down_write(struct rw_semaphore *sem);
+     int down_write_trylock(struct rw_semaphore *sem);
+  （3）写信号量释放
+     void up_write(struct rw_semaphore *sem);7
+
+【7】互斥体
+     使用方法及场合和信号量一致
+   初始化
+   struct mutex my_mutex;
+   mutex_init(&my_mutex);
+   获取互斥体
+   void inline _?_sched mutex_lock(struct mutex *lock);
+   释放互斥体
+   void __sched mutex_unlock(struct mutex *lock);
+
+【1】IO模型
+（1）阻塞
+（2）非阻塞
+（3）IO多路复用
+（4）信号异步通知模型
+
+
+【2】阻塞
+（1）阻塞模型： IO请求： 有资源，执行，返回
+                         没有资源，阻塞等待，直到资源到达，被内核唤醒，执行，返回
+                资源：写：缓冲区空间
+                      读：缓冲区数据
+
+（2）应用层实现阻塞模型： linux默认IO模型就是阻塞模型
+
+
+（3）驱动层是阻塞模型：
+      核心：睡眠机制的实现
+      睡眠机制：简单睡眠和手动睡眠
+     简单睡眠时手动睡眠的api封装。
+
+（4）简单睡眠实现的流程
+  1--定义“等待队列头”（管理整理队列）
+      wait_queue_head_t my_queue;
+
+  2--初始化“等待队列头”
+     init_waitqueue_head(&my_queue);
+
+  3--在合适的地方，创建等待事件
+     wait_event(queue, condition)
+     queue ：传等待队列头
+     condition：条件表达式 nbyte >0
+
+    在睡前： 条件表达式  为真  不睡，顺序执行
+                         为假   睡
+      醒后： 条件表达式  为真   醒，顺序执行 
+                         为假   继续睡
+
+   惊群效应：当资源到达是，等待队列上睡眠的所有进程都被唤醒，竞争资源的现象。 
+  
+ 4--在合适的地方，唤醒队列
+    void wake_up(wait_queue_head_t *queue);
+
+
+【3】非阻塞
+（1）非阻塞模型： IO请求： 有资源，执行，返回
+                           没有资源，出错返回
+（2）应用层实现非阻塞模型
+     1--open(" ",O_NONBLOCK)
+     2--使用fcntl函数，读--改--写
+	int fcntl(int fd, int cmd, long arg);
+    	  int flag；
+          flag = fcntl(fd, F_GETFL, 0); //读
+          flag |= O_NONBLOCK;               //改
+          fcntl(sockfd, F_SETFL, flag);     //写
+
+（3）驱动中实现非阻塞模型
+     当资源不存在时：
+     通过比较file->f_flags中的O_NONBLOCK, 如果置1，应用层在使用非阻塞模型访问，
+     出错返回。 return -EAGAIN;
+
+
+【4】IO多路复用 ---select
+（1）IO多路复用 ：进程同时监控多路输入输出
+
+
+（2）应用层select实现IO多路复用
+   1--其基本思想是：
+	先构造一张有关描述符的表，然后调用一个函数select。当这些文件描述符中的一个或多个已准备好进行I/O操作时，select函数才返回。		
+	函数返回时告诉进程多少个IO可以进行操作，可以进行I/O操作。表里只保留可操作的文件描述符。
+	当这些文件描述符都不可以进行操作时，同时timeout == NULL，select函数阻塞。
+   2--select函数
+	int select(int maxfd, fd_set *read_fds, fd_set *write_fds, fd_set *except_fds, struct timeval *timeout);
+	功能：同时对多个I/O进行监控
+	输入参数：
+		maxfd     所有监控的文件描述符中最大的那一个加1
+
+		read_fds  读表：所有要读的文件文件描述符的集合 
+		write_fds 写表：所有要的写文件文件描述符的集合 
+               except_fds 通知表：其他要向我们通知的文件描述符 
+		
+                timeout  超时设置.  NULL
+			1--NULL：一直阻塞，直到有文件描述符就绪或出错
+			2--时间值为0：非阻塞，仅仅检测文件描述符集的状态，然后立即返回
+			3--时间值不为0，确定值：超过指定时间，则超时返回。
+  3--构建表
+	定义表：fd_set read_fds;
+	FD_SET       将fd加入到fdset    	---- FD_SET(0,&read_fds);    
+	FD_CLR      将fd从fdset里面清除 	---- FD_CLR(0,&read_fds);
+	FD_ZERO   从fdset中清除所有的文件描述符 ---- FD_ZERO(&read_fds);
+	FD_ISSET   判断fd是否在fdset集合中      ---- FD_ISSET(0,&read_fds); 如果在表里，返回真，不在表里返回假。
+
+	void FD_ZERO(fd_set *fdset)
+	void FD_SET(int fd,fd_set *fdset) 
+	void FD_CLR(int fd,fd_set *fdset) 
+	int FD_ISSET(int fd,fd_set *fdset) 
+
+ 4--使用select函数容易出现的问题：
+	1--select 函数成功返回值，表里只会剩下能够进行操作的文件描述符。
+	
+	2--为了解决1的问题，select每次返回后，在重新调用前，需要重新构建表
+	    a--如果监听的文件描述符固定，可以重新初始化	       （ppt上select例子）
+ 	    b--如果监听的文件描述符是动态变化的，使用temp替身。（并发服务器select的实现）
+	3--timeout参数不同时，select函数执行情况不同，
+	    如果设置的是确定的值，一次有效性，再次调用select时，需要对timeout参数，重新初始化。
+
+（3）驱动中IO多路复用的实现
+     核心：实现ops里的poll方法
+     poll()函数典型模板
+
+    static unsigned int xxx_poll(struct file *filp, poll_table *wait)
+    {
+	 unsigned int mask = 0;
+	struct xxx_dev *dev = filp->private_data; /*获得设备结构体指针*/
+	 ...  
+	poll_wait(filp, &dev->r_wait, wait);//加读等待队列头
+	poll_wait(filp, &dev->w_wait, wait);//加写等待队列头 
+	 if (flag ！=0 )//可读
+	 {
+        	 mask |= POLLIN | POLLRDNORM; /*标示数据可获得*/
+	}   
+	 if (flag！=1)//可写
+	 {
+	        mask |= POLLOUT | POLLWRNORM; /*标示数据可写入*/
+        }
+     ...
+     return mask;
+     }
+   
+    hello_ops.poll =xxx_poll;
+
+【5】信号异步通知模型
+（1）信号异步通知模型 
+     不是应用程序主动去请求资源，而是当资源到达时，系统给相应的应用程序发信号（SIGIO），
+     应用程序相信信号处理函数。
+     高效
+
+
+（2）应用层信号异步通知的实现 
+    1--定义信号处理函数
+       void sigterm_handler(int signo)
+      {
+        printf("Have caught sig N.O. %d\n", signo);
+        
+        exit(0);
+      }
+
+    2--讲信号处理函数和SIGIO信号绑定
+     
+       signal(SIGIO, &input_handler);
+
+    3--设置当前进程为设备文件属主
+       fcntl(fd, F_SETOWN,getpid());
+ 
+    4--设置IO模型为异步通知 （类似设置非阻塞IO）  
+     flags = fcntl(fd,F_GETFL);   //读
+     flags |=FASYNC；             //改
+     fcntl(STDIN_FILENO, F_SETFL,flags ); //写
+
+    注意：当改变file->flags中FASYNC位时，内核会调用驱动中的fasync方法。
+
+（3）驱动层实现异步通知模型
+    1--实现fasync方法
+        struct fasync_struct fasync_queue;
+       	int hello_fasync (int fd, struct file *file, int on)
+         {
+             return(fasync_helper(fd, file,on, &fasync_queue));
+         }
+       fasync_helper  根据on执行结果不同
+                      on = 1   ：当前文件描述符，添加到异步通知队
+                      on = 0   ：讲当前文件描述符，从异步通知队列中删除
+
+    2--在合适的位置，给进程发信号
+     void kill_fasync(struct fasync_struct **fp, int sig, int band)
+     kill_fasync( &fasync_queue,SIGIO,POLL_IN);
+
+    3--在release方法中，调用fasync_helper函数讲文件描述符从异步通知队列中删除
+       fasync_helper(-1, file,0, &fasync_queue));
+
+1】内核中断子系统
+主要两件事：
+（1）维护了一张中断例程描述符表
+    1-- struct irq_desc irq_desc[NR_IRQS];// NR_IRQS表示中断源的数目
+        每个成员都是一个结构体struct irq_desc，描述一个中断
+    2--struct irq_desc结构体中的成员action指向该中断号对应的irqaction结构体链表
+      struct?irqaction?{
+                  irq_handler_t handler;?// 指向中断服务程序?
+                   ?unsigned?long?flags;?// 中断标志?
+                    ?unsigned?long?mask;?// 中断掩码?
+                       const?char?*name;?// I/O设备名
+?                          void *dev_id;?// 设备标识
+                ?struct?irqaction?*next;?// 指向下一个描述符
+?                               int?irq;?// IRQ线?
+             struct?proc_dir_entry?*dir;?// 指向IRQn相关的/proc/irq/n目录的描述符
+                     }
+（2）内核中的中断入口号和硬件中断入口号要对应
+      1--内中断对照表 
+          内核源码  arch/arm/mach-s5pc100/include/mach/irqs.h
+      2--外部中断对照表  
+          arch/arm/plat-s5p/include/plat/irqs.h 用宏 IRQ_EINT(x) 来对应
+
+【【2】申请的流程  外部中断1 EINT1
+（1）定义中断处理函数
+     irqreturn_t EINT1_irq_handler(int no, void * )
+     {
+        //相应的中断处理
+        //中断标志位清零
+        return IRQ_HANDLE;
+     }
+
+（2）硬件EINT1对应内核中的中断号  IRQ_EINT(1)
+     1--内中断对照表 
+          内核源码  arch/arm/mach-s5pc100/include/mach/irqs.h
+      2--外部中断对照表  
+          arch/arm/plat-s5p/include/plat/irqs.h 用宏 IRQ_EINT(x) 来对应
+
+（3）注册中断 
+    int request_irq(
+			unsigned int irq, 
+			irq_handler_t handler, 
+			unsigned long flags,
+	    		const char *name, 
+			void *dev_id)；
+    函数功能：在内核中注册中断
+    输入参数：
+    	     unsigned int irq：      中断号  IRQ_EINT(1) 
+	     irq_handler_t handler:  对应的中断处理函数 EINT1_irq_handler
+	     unsigned long flags  :  标志位 
+                                     外部中断触发方式：
+                                         IRQF_TRIGGER_RISING	上升沿触发
+                                         IRQF_TRIGGER_FALLING	下降沿
+					 IRQF_TRIGGER_HIGH	高电平
+					 IRQF_TRIGGER_LOW	低电平
+                                         IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING 双边沿
+                                     中断类型：
+                                         IRQF_DISABLED  独占式
+   					 IRQF_SHARED    共享式
+		                       例：IRQF_TRIGGER_FALLING	| IRQF_DISABLED
+                                      
+	    		const char *name： 中断名称 在/proc/interrupts 显示  "enit1"
+			void *dev_id   用来给中断处理函数传参，独占式 NULL 
+                                                               共享式 私有设备结构体的首地址
+
+     int request_irq(IRQ_EINT(1),EINT1_irq_handler,IRQF_TRIGGER_FALLING	| IRQF_DISABLED,"eint1",NULL)；
+
+（4）释放中断
+    void free_irq(unsigned int irq,void *dev_id);
+
+
+【5】共享中断如何注册注意：
+  1--中断处理函数需要添加判断中断内容
+     irqreturn_t xxx_interrupt(int irq, void *dev_id, struct pt_regs *regs)
+ {
+		...
+		int status = read_int_status();/*获知中断源*/
+		if(!is_myint(dev_id,status))/*判断是否是本设备中断*/
+		{
+			return IRQ_NONE;  /*立即返回*/
+		 }
+		...
+		return IRQ_HANDLED;			
+} 
+  2--申请中断时 flag 传IRQF_SHARED  dev_id 传私有设备结构体
+
+
+【6】中断处理函数需要注意
+    （1）中断处理函数执行迅速，不要有耗时操作
+    （2）不能有引起睡眠的语句
+
+
+【7】中断底半部机制
+     顶半部：中断处理函数  短平快的操作
+     底半部：底半部处理函数 耗时操作
+
+【8】下半部机制
+   1--软中断
+   2--Tasklet ：软中断的特例
+   3--工作队列：多线程的特例 
+   4:--多线程
+
+【9】tasklet实现
+   （1）定义一个处理函数 
+      void my_tasklet_func(unsigned long); 
+   （2）定义一个tasklet结构my_tasklet，与my_tasklet_func(data)函数相关联 
+         DECLARE_TASKLET(my_tasklet, my_tasklet_func, data);
+   （3）调度tasklet 
+        tasklet_schedule(&my_tasklet); 
+
+
+【10】工作队列实现
+ （1）定义一个工作队列 
+      struct work_struct my_wq; 
+ （2）定义一个处理函数 
+      void my_wq_func(unsigned long) ；
+ （3）初始化工作队列并将其与处理函数绑定 
+      INIT_WORK(&my_wq, (void (*)(void *)) my_wq_func, NULL); 
+ （4）调度工作队列执行 
+     schedule_work(&my_wq); 
+
+
+【11】tasklet和workqueue
+（1）tasklet 是软中断的特例:运行在中断上下文，立刻去调用，不能有引起睡眠的语句
+（2）workqueue是多线程的特例：运行在进程上下文，等待调度后才调用，能使用引起睡眠的语句
+
+【11】顶半部和底半部最大的区别： 底半部能够执行硬件中断。
+
+
+
+【12】使能和屏蔽中断 
+    下列3个函数用于屏蔽和使能一个中断源。
+    void disable_irq(int irq);
+    void disable_irq_nosync(int irq);
+    void enable_irq(int irq);
+    disable_irq_nosync()与disable_irq()的区别在于前者立即返回，而后者等待目前的中断处理完成。注意，这3个函数作用于可编程中断控制器，因此，对系统内的所有CPU都生效。 
+
+
+
+

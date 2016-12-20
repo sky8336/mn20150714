@@ -1,0 +1,33 @@
+static int request_irq(int irq, irq_handler_t handler, 
+              unsigned long flags, const char *name,
+              void *devid)
+
+返回值： 成功  0 
+         失败  -errno
+         使用的时候必须判断返回值
+
+参数：   irq :中断号 arch/arm/mach-s5pc100(根据实际平台决定)/include/mach/irqs.h(内部中断)
+                    IRQ_EINT(X)  X=0~31 (外部中断)
+
+         handler :中断处理函数
+              irqreturn_t  my_handler(int  irq, void *devid)
+              {
+                ...中断处理
+                return IRQ_HANDLED；
+              }
+         flags ：中断类型|中断触发方式(只对外部中断有效)
+              include/linux/interrupt.h
+              中断类型：IRQF_DISABLED 当中断函数执行期间全局中断屏蔽
+                        IRQF_SAMPLE_RANDOM 就中断而言与上面相同，除此之外还会被用来填充随机数发生器
+                        IRQF_SHARED 共享终端，上面两种一个中断只允许注册一次，共享终端可以允许多个设备注册同一个中断
+              中断触发方式：IRQF_TRIGGER_RISING(上升沿触发)
+			    IRQF_TRIGGER_FALLING(下降沿触发)
+          name : 同register_chrdev_region name 给别人看到，对中断本身没有意义，一般情况写成设备名字
+                cat /proc/interrupt 能够查看中断的注册及使用情况
+          devid : 传参 当中断处理函数被执行的时候，这个参数通过中断处理函数的第二个参数传递到中断处理函数中
+                  在共享中断中为free_irq服务,这个时候这个参数要有唯一性
+                  如果不传参也不是共享中断则为NULL
+
+free_irq(int irq, void *devid)
+          irq 中断号
+          dev_id 共享中断中释放中断使用，非共享中断为NULL

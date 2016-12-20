@@ -1,0 +1,44 @@
+------
+README
+------
+
+COMPILATION
+===========
+
+To compile the driver, as root use make in the working directory of the code:
+
+  # make
+
+Compile the application using:
+
+  # gcc test.c -o test
+
+TESTING
+=======
+
+To load the module, do (as root):
+
+  # insmod char-read.ko 
+
+You can check for an entry for the module (if it is loaded) from the output of:
+
+  # lsmod | grep char
+
+Create a device file using:
+
+  # mknod /dev/hello c 250 0
+
+Provide executable permissions to test, and run the application to test it:
+
+  # ./test
+
+To remove the module, do (as root):
+
+  # rmmod char-read
+
+Kernel log messages can be viewed from the output of dmesg.
+
+To cleanup the compiled modules, use:
+
+  # make clean
+

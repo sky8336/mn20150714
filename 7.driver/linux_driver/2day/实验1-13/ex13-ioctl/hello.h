@@ -1,0 +1,4 @@
+#define HELLO_MAGIC 'k'
+
+#define HELLO_ONE _IO (HELLO_MAGIC, 1)
+#define HELLO_TWO _IO (HELLO_MAGIC, 2)

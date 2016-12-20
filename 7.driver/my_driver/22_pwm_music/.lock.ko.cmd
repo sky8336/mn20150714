@@ -1,0 +1,1 @@
+cmd_/home/linux/my_driver/mod10/lock.ko := ld -r -m elf_i386 -T /usr/src/linux-headers-3.5.0-23-generic/scripts/module-common.lds --build-id  -o /home/linux/my_driver/mod10/lock.ko /home/linux/my_driver/mod10/lock.o /home/linux/my_driver/mod10/lock.mod.o

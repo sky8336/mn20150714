@@ -1,0 +1,167 @@
+【1】基于platform  总线驱动的编写   （adc）
+
+1.添加adc平台代码
+     arch/arm/mach-s5pc100/mach-smdkc100.c
+
+
+2.编写驱动
+   1.实现platform_driver
+
+      static  struct   platform_driver   s5pc100_adc  = {
+	  
+		  .driver.name= "s5pc100-adc",
+		  .probe  =  s5pc100_probe,
+		  .remove = s5pc100_remove,
+	  
+	  };
+
+  2.实现 probe函数
+    
+  int s5pc100_probe (struct platform_device  *pdev)
+    i.寄存器的映射
+	   adccon  =
+	 //  ioremap(0xf3000000,0x30);xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+	   //ioremap(pdev->resource[0].start,pdev->resource[0].end-pdev->resource[0].start);v错错错错错错
+	ii.获取资源
+
+	struct resource  * platform_get_resource(struct platform_device
+			*dev,unsigned int type,unsigned  int  num);
+
+	struct resource  *memres =
+	platform_get_resource(pdev,IORESOURCE_MEM,0);//从pdev中获取第num个类型为type的资源
+	struct resource  *irqres = platform_get_resource(pdev,IORESOURCE_IRQ,0);
+
+	判断资源是否合法
+
+	 if(memres  || irqres     ==  null)
+	｛
+	
+		return -ENOMEM;
+
+	｝
+
+
+	void  __iomem  *adccon;
+	adccon  = ioremap(memres_->start,memres->end-memres->start);
+	if(adccon  ==  null)
+	{
+	
+	}
+
+    request_irq(irqres->start,adc_handler,DIALED,"ADC");
+	判断返回值
+
+
+#define  ADC_MUTEX  1C
+#define  ADC_CLEAR  18
+#define  ADC_DATA0  0C
+#define ADC_CON    00
+
+	
+	struct clk  *clk_t;
+	clk_t  = clk_get(NULL,"adc");获取时钟
+	           clk_enable(clk_t);      使能时钟
+
+	  writel(0,ADC_MUTEX+adccon);
+	  writel((1 <<  16| 1<< 14 | 0xff << 6),adccon);
+iii:
+   
+     申请设备号
+	    MKDEV(MAJOR,MINOR);
+
+    注册设备号
+	register_chdev_region
+	判断返回值 
+
+	初始化 cdev
+	  cdev_init
+
+	添加cdev 到系统中
+	 
+	cdev_add
+	判断返回值
+
+iiii：填充file_operations
+     
+     open
+	 release
+	 read
+
+
+iiii:
+
+int flag  = 0;
+实现read函数：
+
+     i.打开adc转换
+	   writel(readl(adccon) |(0x 1  << 0),adccon);
+
+	   等中断
+	   wait_event(    ,flag !=  0);
+	 ii.读数据
+	 
+	 data  = readl(adccon + ADC_DATA0 & 0xfff);
+	  
+	 copy_to_user();
+
+
+	  flag  = 0;
+
+
+
+iiii：中断处理函数
+
+
+    i.清中断
+	writel（0,adccon+ADC_CLEAR）；
+	ii.唤醒读
+
+	flag  =1;
+
+	wake_up();
+
+
+	卸载函数：
+
+	int   s5pc100_remove()
+{
+
+	和probe相反的操作
+
+
+
+
+
+		cdev_del
+		释放设备号
+		unregister_chdev_region
+       关闭时钟   clk_disable
+		free_irq
+		iounmap
+}
+	 
+
+static int   hello_init(void)
+{
+
+
+	return     platform_driver_register(&s5pc100_adc);
+
+}
+static void  hello_exit(void )
+{
+
+	platform_driver_unregister(&s5pc100_adc);
+}
+
+module_init(hello_init);
+module_exit(hello_exit);
+
+
+
+
+
+
+
+
+

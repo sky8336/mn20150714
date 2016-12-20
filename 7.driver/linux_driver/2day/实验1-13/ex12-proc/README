@@ -1,0 +1,36 @@
+------
+README
+------
+
+COMPILATION
+===========
+
+To compile, as root use make in the working directory of the code:
+
+  # make
+
+TESTING
+=======
+
+To load the module, do (as root):
+
+  # insmod proc.ko
+
+You can check for an entry for the module (if it is loaded) from the output of:
+
+  # lsmod | grep proc
+
+To check the proc interface do the following:
+
+  # cat /proc/hello
+
+To remove the module, do (as root):
+
+  # rmmod proc
+
+Kernel log messages can be viewed from the output of dmesg.
+
+To cleanup the compiled modules, use:
+
+  # make clean
+

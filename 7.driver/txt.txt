@@ -1,0 +1,4 @@
+
+void device_destroy(struct class *class, dev_t devt)
+
+void class_destroy(struct class *cls)

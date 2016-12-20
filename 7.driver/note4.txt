@@ -1,0 +1,30 @@
+【1】copy_from_user(to,from,size)
+
+	参数：to  内核空间
+	    ：from   用户空间
+		size：拷贝数据的大小
+
+		返回值：成功返回0，失败返回未拷贝的字节数
+
+
+【2】ioctl   linux 宏 命令
+type:数据的类型    'k'
+nr：序列号          默认的序列号为0
+   _IO(type,nr)  //没有数据传递的命令
+  _IOR(type,nr,size)//从驱动中读取数据
+  _IOW(type,nr,size) //向驱动中写数据
+  _IOWR(type,nr,size)//从驱动中读写数据
+	size：用户传递的数据的类型
+ 【3】自动分配设备号
+    alloc_chrdev_region(devno,baseminor,countr
+			name);
+	参数： devno :设备号
+	       baseminor:第一个次设备号
+		   count：次设备号的个数
+【4】创建类
+   class_create(owner，name);
+    owner:THIS_MODULE
+	name:类名，文件名字
+【5】创建设备节点
+ 	device_create(struct class *,struct device *device,devno,char *data,char *name);
+	device_create(cls,NULL,devno,NULL,"led");
