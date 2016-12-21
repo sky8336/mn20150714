@@ -1,1 +1,0 @@
-cmd_/home/linux/2015-05-07/driver_key/key.ko := arm-none-linux-gnueabi-ld -EL -r  -T /home/linux/s5pc100/linux-2.6.35-farsight/scripts/module-common.lds --build-id -o /home/linux/2015-05-07/driver_key/key.ko /home/linux/2015-05-07/driver_key/key.o /home/linux/2015-05-07/driver_key/key.mod.o

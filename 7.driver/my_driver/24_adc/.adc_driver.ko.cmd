@@ -1,1 +1,0 @@
-cmd_/home/linux/my_driver/24_adc/adc_driver.ko := arm-cortex_a8-linux-gnueabi-ld -EL -r  -T /home/linux/linux-2.6.35/scripts/module-common.lds --build-id -o /home/linux/my_driver/24_adc/adc_driver.ko /home/linux/my_driver/24_adc/adc_driver.o /home/linux/my_driver/24_adc/adc_driver.mod.o

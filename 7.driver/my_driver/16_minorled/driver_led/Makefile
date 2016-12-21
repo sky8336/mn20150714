@@ -5,7 +5,6 @@ KERNELDIR ?=~/s5pc100/linux-2.6.35-farsight
 123:
 	make  -C $(KERNELDIR)  M=$(shell  pwd)  modules
 clean:
-	rm  -rf  *.ko *.o *.mod*  module* Mo*
-
+	rm  -rf  *.ko *.o *.mod*  module* Mo* .*.cmd .tmp_versions
 
 obj-m = led.o

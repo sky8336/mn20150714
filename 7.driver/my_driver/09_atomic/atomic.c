@@ -13,17 +13,13 @@ MODULE_LICENSE("GPL");
 
 char data[N];
 
-static int major = 250;
+static int major = 220;
 static int minor = 0;
-
-
-
 
 static struct class *cls;
 static struct device *device;
 
 atomic_t v = ATOMIC_INIT(1);
-
 
 
 static int hello_open(struct inode *inode,struct file *file)
@@ -32,9 +28,9 @@ static int hello_open(struct inode *inode,struct file *file)
 		atomic_inc(&v);
 		return -EBUSY;
 	}
-	
+
 	printk("hello_open\n");
-//	printk("minor = %d\n",iminor(inode)); 	//获取次设备号
+//	printk("minor = %d\n",iminor(inode));	//获取次设备号
 //	printk("minor = %d\n",iminor(file->f_dentry->d_inode)); //获取次设备号，第2种方法
 	return 0;
 }
@@ -54,7 +50,7 @@ static ssize_t hello_read (struct file *file, char __user *buf, size_t size, lof
 		size = N;
 	}
 	if(size < 0){
-		return EINVAL;  
+		return EINVAL;
 	}
 
 	if(copy_to_user(buf,data,size)){
@@ -74,7 +70,7 @@ static ssize_t hello_write (struct file *file, const char __user *buff, size_t s
 		return EINVAL;
 
 	if(0 != copy_from_user(data,buff,20)){
-		return ENOMEM; 
+		return ENOMEM;
 	}
 
 	printk("hello_write\n");
@@ -147,16 +143,13 @@ static void hello_exit(void)
 	device_destroy(cls, devno + 2);
 	device_destroy(cls, devno + 3);
 	class_destroy(cls); //销毁类
-	
+
 	cdev_del(&cdev); //卸载cdev结构体
 	unregister_chrdev_region(devno,num_of_device); //卸载设备号
 
-	printk("hello_exit\n");	
+	printk("hello_exit\n");
 
 }
 
 module_init(hello_init);
 module_exit(hello_exit);
-
-
-
