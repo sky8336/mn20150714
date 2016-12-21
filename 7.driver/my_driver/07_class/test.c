@@ -16,18 +16,18 @@ int main(int argc, const char *argv[])
 		perror();
 	}
 #endif
-	fd = open("/dev/hello_class",O_RDWR,0664);	
-	if(0 > fd){
+	fd = open("/dev/hello_class", O_RDWR, 0664);
+	if (0 > fd) {
 		printf("test : open : error\n");
 		return -1;
 	}
-	
-	write(fd,buff,20);
-    nbyte = read(fd,buff, sizeof(buff));
 
-	printf("test : buff[] = %s\n",buff);
-	printf("test : nbyte = %d\n",nbyte);
-	
+	write(fd, buff, 20);
+    nbyte = read(fd, buff, sizeof(buff));
+
+	printf("test : buff[] = %s\n", buff);
+	printf("test : nbyte = %d\n", nbyte);
+
 	ioctl(fd,LED_ON);
 	sleep(1);
 	ioctl(fd,LED_OFF);
@@ -36,8 +36,4 @@ int main(int argc, const char *argv[])
 	close(fd);
 
 	return 0;
-
 }
-
-
-

@@ -9,8 +9,9 @@ MODULE_LICENSE("GPL");
 
 char data[N];
 
-static int major = 250;
-static int minor = 0; 
+//static int major = 250;
+static int major = 220;
+static int minor = 0;
 
 static int hello_open(struct inode *inode,struct file *fl)
 {
@@ -25,39 +26,40 @@ static int hello_release (struct inode *inode, struct file *file)
 	return 0;
 }
 
-static ssize_t hello_read (struct file *file, char __user *buf, size_t size, loff_t *loff)
+static ssize_t hello_read (struct file *file, char __user *buf,
+		size_t size, loff_t *loff)
 {
-	if(size > N){
+	if (size > N)
 		size = N;
-	}
-	if(size < 0){
-		return EINVAL;  
-	}
 
-	if(copy_to_user(buf,data,size)){
+	if (size < 0)
+		return EINVAL;
+
+	if(copy_to_user(buf,data,size))
 		return ENOMEM;
-	}
 
 	printk("hello_read\n");
 	return size;
-	
 }
 
-static ssize_t hello_write (struct file *file, const char __user *buff, size_t size, loff_t *loff)
+static ssize_t hello_write (struct file *file, const char __user *buff,
+		size_t size, loff_t *loff)
 {
-	if(size > N)
+	if (size > N)
 		size = N;
-	if(size < 0)
+
+	if (size < 0)
 		return EINVAL;
 
-	if(0 != copy_from_user(data,buff,20)){
-		return ENOMEM; 
-	}
+	if (0 != copy_from_user(data,buff,20))
+		return ENOMEM;
 
 	printk("hello_write\n");
 	printk("hello_write : data = %s\n",data);
+
 	return size;
 }
+
 static struct cdev cdev;
 static struct file_operations hello_ops = {
 	.owner = THIS_MODULE,
@@ -75,7 +77,7 @@ static int hello_init(void)
 	dev_t devno = MKDEV(major,minor);
 	ret = register_chrdev_region(devno,1,"hello");
 	if(0 != ret){
-		printk("register_chrdev_region : error\n");
+		printk("register_chrdev_region : error ret = %d\n", ret);
 		return -1;
 	}
 
@@ -98,12 +100,9 @@ static void hello_exit(void)
 	cdev_del(&cdev);
 	unregister_chrdev_region(devno,1);
 
-	printk("hello_exit\n");	
+	printk("hello_exit\n");
 
 }
 
 module_init(hello_init);
 module_exit(hello_exit);
-
-
-

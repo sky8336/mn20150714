@@ -2,23 +2,21 @@
 #include <linux/module.h>
 #include <linux/fs.h>
 #include <linux/cdev.h>
-#include <linux/uaccess.h>
+#include <asm/uaccess.h>
 #include "head.h"
 #include <linux/device.h>
-
-#define N 128
-#define DEV_NAME "hello_class"
 MODULE_LICENSE("GPL");
 
-char data[N];
 
 static int major = 220;
-static int minor = 1;
+static int minor = 0;
+char data[128] = "\0";
 
-static struct class *cls;
-static struct device *device;
+static struct  cdev  cdev;
+struct class  *cls;
+struct device  device;
 
-static int hello_open(struct inode *inode, struct file *fl)
+static int hello_open(struct inode *inode, struct file *file)
 {
 	printk("hello_open\n");
 	return 0;
@@ -27,39 +25,47 @@ static int hello_open(struct inode *inode, struct file *fl)
 static int hello_release (struct inode *inode, struct file *file)
 {
 	printk("hello_release\n");
-
 	return 0;
 }
 
-static ssize_t hello_read (struct file *file, char __user *buf,
+
+static ssize_t hello_read(struct file *file, char __user *buff,
 		size_t size, loff_t *loff)
 {
-	if (size > N)
-		size = N;
+	int ret;
+
+	if (size > 128)
+		size = 128;
 	if (size < 0)
 		return -EINVAL;
 
-	if (copy_to_user(buf,data,size))
+	ret = copy_to_user(buff, data, size);
+	if (ret != 0)
 		return -ENOMEM;
 
+	printk("buff  = %s\n",buff);
 	printk("hello_read\n");
-	return size;
 
+	return  size;
 }
 
 static ssize_t hello_write(struct file *file, const char __user *buff,
 		size_t size, loff_t *loff)
 {
-	if(size > N)
-		size = N;
-	if(size < 0)
-		return EINVAL;
+	int ret;
 
-	if (0 != copy_from_user(data,buff,20))
-		return -ENOMEM;
+	if (size  > 128)
+		size = 128;
+	if (size  <  0)
+		return -EINVAL;
+
 
 	printk("hello_write\n");
-	printk("data = %s\n",data);
+	ret = copy_from_user(data,buff,size);
+	if (0 != ret)
+		return -ENOMEM;
+
+	printk("data  = %s\n",data);
 	return size;
 }
 
@@ -78,45 +84,45 @@ static long hello_unlocked_ioctl(struct file *file, unsigned int cmd, unsigned l
 	return 0;
 }
 
-static struct cdev cdev;
 static struct file_operations hello_ops = {
 	.owner = THIS_MODULE,
 	.open = hello_open,
 	.read = hello_read,
-	.write = hello_write,
 	.release = hello_release,
+	.write = hello_write,
 	.unlocked_ioctl = hello_unlocked_ioctl,
 };
 
 static int hello_init(void)
 {
 	int ret;
-	dev_t devno = MKDEV(major, minor);
 
-	//alloc_chrdev_region(&devno,0,1,DEV_NAME);
-	ret = register_chrdev_region(devno, 1, DEV_NAME);
+	dev_t  devno  = MKDEV(major, minor);
+
+	//alloc_chrdev_region(&devno, 0, 1, "duang");
+	ret = register_chrdev_region(devno, 1, "hello");
 	if (0 != ret)
-		printk("register_chrdev_region : error\n");
+		printk("register_chrdev_region\n");
 
 	cdev_init(&cdev, &hello_ops);
 
 	ret = cdev_add(&cdev, devno, 1);
 	if (0 != ret) {
-		printk("cdev_add\n");
 		unregister_chrdev_region(devno, 1);
+		printk("cdev_add\n");
 		return -1;
 	}
 
-	cls = class_create(THIS_MODULE, DEV_NAME);
-	device_create(cls, device, devno, NULL, DEV_NAME);
-
+	cls = class_create(THIS_MODULE, "hello");
+	device_create(cls, NULL, devno, NULL, "led");
 	printk("hello_init\n");
-	return 0;
+
+	return  0;
 }
 
 static void hello_exit(void)
 {
-	dev_t devno = MKDEV(major, minor);
+	dev_t  devno  = MKDEV(major, minor);
 
 	device_destroy(cls, devno);
 	class_destroy(cls);

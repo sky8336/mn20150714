@@ -3,6 +3,7 @@
 #include <linux/init.h>
 #include <linux/moduleparam.h>
 #include <linux/stat.h>
+
 MODULE_LICENSE("GPL");
 
 static int global_data = 123;
@@ -10,7 +11,7 @@ EXPORT_SYMBOL(global_data);
 
 int print_fun(void)
 {
-	printk("hello_v1.c --->fun_called ok !!: defined in hello.c\n");
+	printk("extern.c --->fun_called ok !!: defined in symbol.c\n");
 	return 0;
 }
 EXPORT_SYMBOL(print_fun);
@@ -18,8 +19,10 @@ EXPORT_SYMBOL(print_fun);
 int *funp(void)
 {
 	int *fun_p;
+
 	fun_p = &global_data;
 	printk("fun_p called\n");
+
 	return fun_p;
 }
 EXPORT_SYMBOL(funp);
@@ -27,14 +30,14 @@ EXPORT_SYMBOL(funp);
 
 int hello_init(void)
 {
-	printk("init_module\n");
+	printk("symbol.c: init_module\n");
 	return 0;
 }
 
 void hello_exit(void)
 {
-	printk("cleanup_module\n");	
-	
+	printk("symbol.c: cleanup_module\n");
+
 }
 
 module_init(hello_init);

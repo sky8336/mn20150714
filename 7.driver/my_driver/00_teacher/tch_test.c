@@ -6,7 +6,7 @@
 #include <sys/signal.h>
 int fd;
 
-void  signal_handler(int  signo)
+void signal_handler(int  signo)
 {
 
 	int  key_var;
@@ -16,9 +16,10 @@ void  signal_handler(int  signo)
 	printf("*********************************\n");
 	printf("key_var  = %d\n",key_var);
 }
+
 int main(int argc, const char *argv[])
 {
-	
+
 	int  flags  = 0;
 	char buff[30] = "hello world";
 
@@ -36,7 +37,7 @@ int main(int argc, const char *argv[])
 	flags = fcntl(fd,F_GETFL);
 	fcntl(fd,F_SETFL,flags|FASYNC);
 
-	
+
 	//write(fd,buff,20);
 	//
 	//ioctl(fd,LED_ON);
@@ -46,7 +47,7 @@ int main(int argc, const char *argv[])
 //	sleep(10);
 	while(1)
 	{
-	
+
 		sleep(100000);
 	}
 

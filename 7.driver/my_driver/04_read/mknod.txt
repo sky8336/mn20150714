@@ -1,0 +1,12 @@
+查看系统注册的设备号
+cat  /proc/devices 
+
+创建设备文件的方法有两种：
+ 
+手工创建：
+	就是在挂载驱动程序之后，根据主设备号通过命令创建建，在/dev下就有一个对应设备文件:
+	sudo mknod /dev/hello  c 220 0
+
+
+gcc test.c
+sudo ./a.out

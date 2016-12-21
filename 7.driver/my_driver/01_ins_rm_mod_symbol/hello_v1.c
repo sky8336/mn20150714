@@ -7,27 +7,21 @@
 MODULE_LICENSE("GPL");
 
 extern int global_data;
-extern int print_fun(void);
-extern int *funp(void);
+extern int print_k(void);
 
-int hello_init(void)
+int init_module(void)
 {
-	int *ret_fun_p;
-
-	printk("init_module\n");
+	printk("hello_v1.c: init_module\n");
 	printk("global_data = %d\n",global_data);
-
-	print_fun();
-	ret_fun_p = funp();
-	printk("*fun_p = %d\n",*ret_fun_p);
+	print_k();
 
 	return 0;
 }
 
-void hello_exit(void)
+void cleanup_module(void)
 {
 	printk("cleanup_module\n");
 }
 
-module_init(hello_init);
-module_exit(hello_exit);
+//module_init(hello_init);
+//module_exit(hello_exit);

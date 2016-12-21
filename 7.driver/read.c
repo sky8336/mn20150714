@@ -4,16 +4,13 @@
 #include <linux/cdev.h>
 #include <asm/uaccess.h>
 
-
 MODULE_LICENSE("GPL");
-
 
 static int major = 250;
 static int minor = 0;
 char data[20]="hello world";
 
 static struct  cdev  cdev;
-
 
 static int hello_open (struct inode *inode, struct file *file)
 {
@@ -22,7 +19,7 @@ static int hello_open (struct inode *inode, struct file *file)
 	return  0;
 
 }
-	
+
 static int hello_release (struct inode *inode, struct file *file)
 {
 
@@ -30,7 +27,6 @@ static int hello_release (struct inode *inode, struct file *file)
 
 	return  0;
 }
-
 
 static ssize_t hello_read(struct file *file, char __user *buff, size_t size, loff_t *loff)
 {
@@ -76,11 +72,11 @@ static  int hello_init(void)
 		return -1;
 	}
 	cdev_init(&cdev,&hello_ops);
-	
+
 	ret = cdev_add(&cdev,devno,1);
 	if(0 != ret)
 	{
-	
+
 
 		unregister_chrdev_region(devno,1);
 		printk("cdev_add \n");
@@ -103,7 +99,3 @@ static void hello_exit(void)
 
 module_init(hello_init);
 module_exit(hello_exit);
-
-
-
-

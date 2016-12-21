@@ -8,8 +8,13 @@ MODULE_LICENSE("GPL");
 
 char data[20] = "hello world";
 
-static int major = 250;
-static int minor = 0; 
+/*
+ * devno may be occupied
+ * register_chrdev_region : ret = -16
+ * ls -l /dev
+ * */
+static int major = 220;
+static int minor = 0;
 
 static int hello_open(struct inode *inode,struct file *fl)
 {
@@ -26,20 +31,18 @@ static int hello_release (struct inode *inode, struct file *file)
 
 ssize_t hello_read (struct file *file, char __user *buf, size_t size, loff_t *loff)
 {
-	if(size > 128){
+	if (size > 128)
 		size = 128;
-	}
-	if(size < 0){
-		return EINVAL;  
-	}
 
-	if(copy_to_user(buf,data,size)){
+	if (size < 0)
+		return -EINVAL;
+
+	if (copy_to_user(buf,data,size))
 		return 14;
-	}
 
 	printk("hello_read\n");
+
 	return size;
-	
 }
 
 static struct cdev cdev;
@@ -55,18 +58,18 @@ static int hello_init(void)
 {
 	int ret;
 
-	dev_t devno = MKDEV(major,minor);
-	ret = register_chrdev_region(devno,1,"hello");
+	dev_t devno = MKDEV(major, minor);
+	ret = register_chrdev_region(devno, 1, "hello");
 	if(0 != ret){
-		printk("register_chrdev_region : error\n");
+		printk("register_chrdev_region : ret = %d\n", ret);
 		return -1;
 	}
 
-	cdev_init(&cdev,&hello_ops);
-	ret = cdev_add(&cdev,devno,1);
+	cdev_init(&cdev, &hello_ops);
+	ret = cdev_add(&cdev, devno, 1);
 	if(0 != ret){
 		printk("cdev_add\n");
-		unregister_chrdev_region(devno,1);
+		unregister_chrdev_region(devno, 1);
 		return -1;
 	}
 
@@ -76,16 +79,12 @@ static int hello_init(void)
 
 static void hello_exit(void)
 {
-
 	dev_t devno = MKDEV(major,minor);
 	cdev_del(&cdev);
 	unregister_chrdev_region(devno,1);
 
-	printk("cleanup_module\n");	
+	printk("cleanup_module\n");
 }
 
 module_init(hello_init);
 module_exit(hello_exit);
-
-
-
