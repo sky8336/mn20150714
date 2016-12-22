@@ -1,0 +1,16 @@
+(1)修改arch/arm/mach-s5pc100/mach-smdkc100.c
+添加如下内容：
+struct platform_device s3c_device_adc_convert = {
+	.name			= "adc_convert",
+	.id				= -1,
+	.dev.parent		= &s3c_device_adc.dev,
+};
+
+在smdkc100_devices结构体数组中添加如下内容
+&s3c_device_adc,
+&s3c_device_adc_convert,
+
+(2)配置并重新编译内核
+make menuconfig
+System Type  --->
+	<*> ADC common driver support

@@ -1,5 +1,0 @@
-配置并重新编译内核
-make menuconfig
-	Device Drivers  --->
-		<*> I2C support  --->
-			<*>   I2C device interface
