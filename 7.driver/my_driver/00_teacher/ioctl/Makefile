@@ -5,7 +5,7 @@ KERNELDIR ?=/lib/modules/$(shell uname -r)/build
 123:
 	make  -C $(KERNELDIR)  M=$(shell  pwd)  modules
 clean:
-	rm  -rf  *.ko *.o *.mod*  module* Mo*
+	rm  -rf  *.ko *.o *.mod*  module* Mo* .*.cmd .tmp_versions
 
 
 obj-m = ioctl.o

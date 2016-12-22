@@ -5,7 +5,7 @@ KERNELDIR ?=/lib/modules/$(shell uname -r)/build
 123:
 	make  -C $(KERNELDIR)  M=$(shell  pwd)  modules
 clean:
-	rm  -rf  *.ko hello.o hello.mod*  module* Mo*
+	rm  -rf  *.ko hello.o hello.mod*  module* Mo* .*.cmd .tmp_versions
 
 
 obj-m = hello_v1.o   hello_v2.o
