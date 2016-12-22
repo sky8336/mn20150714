@@ -27,12 +27,12 @@ static int  hello_init(void)
 	printk("global_data = %d\n",global_data);
 	for(i = 0;i < num;i++)
 	{
-	
+
 		printk("array = %d\n",array[i]);
 	}
 	printk("init_module\n");
 
-	
+
 	return  0;
 }
 static void   hello_exit(void)

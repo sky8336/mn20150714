@@ -31,10 +31,10 @@ static int  hello_init(void)
 
 		dev_t devno = MKDEV(major,minor);
 	ret = register_chrdev_region(devno,1,"hello");
-	
+
 	if(0 != ret)
 	{
-	
+
 		printk("register_chrdev_region fail  \n");
 		return  0;
 	}
@@ -49,10 +49,10 @@ static int  hello_init(void)
 		unregister_chrdev_region(devno,1);
 		return 0;
 	}
-	
+
 	printk("init_module\n");
 
-	
+
 	return  0;
 }
 static void   hello_exit(void)
