@@ -56,7 +56,9 @@ static ssize_t hello_write(struct file *file, const char __user *buff,
 	if (size < 0)
 		return -EINVAL;
 
-	if (0 != copy_from_user(data, buff, 20))
+	memset(data, '\0', sizeof(data));
+
+	if (0 != copy_from_user(data, buff, size))
 		return -ENOMEM;
 
 	printk("hello_write\n");

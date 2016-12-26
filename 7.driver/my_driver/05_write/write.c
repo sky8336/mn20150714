@@ -31,31 +31,31 @@ static ssize_t hello_read (struct file *file, char __user *buf,
 {
 	if (size > N)
 		size = N;
-
 	if (size < 0)
-		return EINVAL;
+		return -EINVAL;
 
-	if(copy_to_user(buf,data,size))
-		return ENOMEM;
+	if(copy_to_user(buf, data, size))
+		return -ENOMEM;
 
 	printk("hello_read\n");
 	return size;
 }
 
-static ssize_t hello_write (struct file *file, const char __user *buff,
+static ssize_t hello_write(struct file *file, const char __user *buff,
 		size_t size, loff_t *loff)
 {
 	if (size > N)
 		size = N;
-
 	if (size < 0)
-		return EINVAL;
+		return -EINVAL;
 
-	if (0 != copy_from_user(data,buff,20))
-		return ENOMEM;
+	memset(data, '\0', sizeof(data));
+
+	if (0 != copy_from_user(data, buff, size))
+		return -ENOMEM;
 
 	printk("hello_write\n");
-	printk("hello_write : data = %s\n",data);
+	printk("hello_write : data = %s\n", data);
 
 	return size;
 }

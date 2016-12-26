@@ -24,14 +24,14 @@ static int hello_open(struct inode *inode, struct file *fl)
 	return 0;
 }
 
-static int hello_release (struct inode *inode, struct file *file)
+static int hello_release(struct inode *inode, struct file *file)
 {
 	printk("hello_release\n");
 
 	return 0;
 }
 
-static ssize_t hello_read (struct file *file, char __user *buf,
+static ssize_t hello_read(struct file *file, char __user *buf,
 		size_t size, loff_t *loff)
 {
 	if (size > N)
@@ -39,7 +39,7 @@ static ssize_t hello_read (struct file *file, char __user *buf,
 	if (size < 0)
 		return -EINVAL;
 
-	if (copy_to_user(buf,data,size))
+	if (copy_to_user(buf, data, size))
 		return -ENOMEM;
 
 	printk("hello_read\n");
@@ -50,16 +50,18 @@ static ssize_t hello_read (struct file *file, char __user *buf,
 static ssize_t hello_write(struct file *file, const char __user *buff,
 		size_t size, loff_t *loff)
 {
-	if(size > N)
+	if (size > N)
 		size = N;
-	if(size < 0)
-		return EINVAL;
+	if (size < 0)
+		return -EINVAL;
 
-	if (0 != copy_from_user(data,buff,20))
+	memset(data, '\0', sizeof(data));
+
+	if (0 != copy_from_user(data, buff, size))
 		return -ENOMEM;
 
 	printk("hello_write\n");
-	printk("data = %s\n",data);
+	printk("data = %s\n", data);
 	return size;
 }
 

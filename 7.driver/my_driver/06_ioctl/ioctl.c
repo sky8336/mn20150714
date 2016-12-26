@@ -49,12 +49,13 @@ static ssize_t hello_write(struct file *file, const char __user *buff,
 {
 	if (size > N)
 		size = N;
-
 	if (size < 0)
-		return EINVAL;
+		return -EINVAL;
 
-	if (0 != copy_from_user(data,buff,20))
-		return ENOMEM;
+	memset(data, '\0', sizeof(data));
+
+	if (0 != copy_from_user(data, buff, size))
+		return -ENOMEM;
 
 	printk("hello_write\n");
 	printk("data = %s\n",data);

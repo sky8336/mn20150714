@@ -22,18 +22,18 @@ static int hello_open(struct inode *inode,struct file *fl)
 	return 0;
 }
 
-static int hello_release (struct inode *inode, struct file *file)
+static int hello_release(struct inode *inode, struct file *file)
 {
 	printk("hello_release\n");
 
 	return 0;
 }
 
-ssize_t hello_read (struct file *file, char __user *buf, size_t size, loff_t *loff)
+ssize_t hello_read(struct file *file, char __user *buf,
+		size_t size, loff_t *loff)
 {
 	if (size > 128)
 		size = 128;
-
 	if (size < 0)
 		return -EINVAL;
 

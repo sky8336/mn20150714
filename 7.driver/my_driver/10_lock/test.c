@@ -19,7 +19,7 @@ int main(int argc, const char *argv[])
 
 	int count = 2;
 	do {
-		fd = open("/dev/xhello-0",O_RDWR);
+		fd = open("/dev/xhello-0", O_RDWR);
 		if (0 > fd) {
 			perror("open /dev/xhello-0");
 			return -1;
