@@ -12,17 +12,23 @@ int main(int argc, const char *argv[])
 	int nbyte;
 	char buff[20] = "hello world";
 
-#if 0
+#if 1 //test how to use perror
 	if(0 != chmod("/dev/hello_class",0666)){
-		perror();
+		perror("/dev/hello_class");
 	}
 #endif
-	printf("\n************* sudo dmesg -c **************\n");
-	system("sudo dmesg -c");
+	/*
+	 * dmesg --help
+	 * sudo dmesg -c : read and clear
+	 * sudo dmesg -C : clear
+	 * */
+	//printf("\n************* sudo dmesg -c **************\n");
+	//system("sudo dmesg -c");
+	system("sudo dmesg -C");
 
 	fd = open(argv[1], O_RDWR);
 	if (0 > fd) {
-		printf("test : open : error\n");
+		printf("test : open : error: fd = %d\n", fd);
 		return -1;
 	}
 
