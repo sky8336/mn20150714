@@ -123,7 +123,7 @@ static int hello_init(void)
 		return -1;
 	}
 
-	cdev_init(&cdev, &hello_ops); //初始化cdev结构体
+	cdev_init(&cdev,&hello_ops); //初始化cdev结构体
 	ret = cdev_add(&cdev, devno, num_of_device); //注册cdev结构体
 	if (0 != ret) {
 		printk("cdev_add\n");
