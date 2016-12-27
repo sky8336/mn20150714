@@ -147,7 +147,7 @@ static int hello_init(void) //自定义加载函数
 
 	ret = register_chrdev_region(devno,num_of_device,"xhello"); //注册设备号
 	if(0 != ret){
-//		alloc_chrdev_region(&devno,0,1,DEV_NAME); //自动分配设备号
+		//alloc_chrdev_region(&devno,0,1,DEV_NAME); //自动分配设备号
 		printk("register_chrdev_region : error\n");
 		return -1;
 	}

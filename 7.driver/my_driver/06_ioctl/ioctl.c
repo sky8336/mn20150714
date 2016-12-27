@@ -32,16 +32,14 @@ static ssize_t hello_read(struct file *file, char __user *buf,
 {
 	if (size > N)
 		size = N;
-
 	if (size < 0)
-		return EINVAL;
+		return -EINVAL;
 
-	if (copy_to_user(buf,data,size))
-		return ENOMEM;
+	if (copy_to_user(buf, data, size))
+		return -ENOMEM;
 
 	printk("hello_read\n");
 	return size;
-
 }
 
 static ssize_t hello_write(struct file *file, const char __user *buff,
@@ -58,7 +56,7 @@ static ssize_t hello_write(struct file *file, const char __user *buff,
 		return -ENOMEM;
 
 	printk("hello_write\n");
-	printk("data = %s\n",data);
+	printk("data = %s\n", data);
 
 	return size;
 }
@@ -91,7 +89,6 @@ static struct file_operations hello_ops = {
 	.unlocked_ioctl = hello_unlocked_ioctl,
 };
 
-
 static int hello_init(void)
 {
 	int ret;
@@ -99,15 +96,13 @@ static int hello_init(void)
 	dev_t devno = MKDEV(major, minor);
 	ret = register_chrdev_region(devno, 1, "hello_iotcl");
 	if (0 != ret) {
-
 		alloc_chrdev_region(&devno, 0, 1, "hello_iotcl");
 		printk("register_chrdev_region : error\n");
-
 	}
 
 	cdev_init(&cdev, &hello_ops);
 	ret = cdev_add(&cdev, devno, 1);
-	if(0 != ret){
+	if (0 != ret) {
 		printk("cdev_add\n");
 		unregister_chrdev_region(devno, 1);
 		return -1;

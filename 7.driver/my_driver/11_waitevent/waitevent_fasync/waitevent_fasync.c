@@ -2,7 +2,7 @@
 #include <linux/module.h>
 #include <linux/fs.h>
 #include <linux/cdev.h>
-#include <linux/uaccess.h>
+#include <asm/uaccess.h>
 #include "head.h"
 
 #define CLASS_DEV_CREATE
@@ -14,13 +14,13 @@
 
 #ifdef WAITEVENT_USE
 #include <linux/sched.h>
+#include <linux/poll.h>
 #endif
 
 #define N 128
-#define num_of_device 4
 MODULE_LICENSE("GPL");
 
-char data[N];
+char data[N] = "\0";
 
 static int major = 220;
 static int minor = 0;
@@ -31,24 +31,28 @@ static struct device *device;
 #endif
 
 #ifdef WAITEVENT_USE
-int flag_rw = 1; //写
-wait_queue_head_t my_queue; //定义“等待队列头”
+int  flag  =1;
+wait_queue_head_t  hello_readq;
+#endif
+
+#ifdef FASYNC_USE
+struct fasync_struct  *fasync;
 #endif
 
 static int hello_open(struct inode *inode, struct file *file)
 {
-	printk("hello_open\n");
-	return 0;
+	printk("hello_open  \n");
+	return  0;
 }
 
 static int hello_release(struct inode *inode, struct file *file)
 {
-	printk("hello_release\n");
+	printk("hello_release \n");
 
 	return 0;
 }
 
-static ssize_t hello_read(struct file *file, char __user *buf,
+static ssize_t hello_read(struct file *file, char __user *buff,
 		size_t size, loff_t *loff)
 {
 	if (size > N)
@@ -57,17 +61,17 @@ static ssize_t hello_read(struct file *file, char __user *buf,
 		return -EINVAL;
 
 #ifdef WAITEVENT_USE
-	wait_event_interruptible(my_queue, flag_rw != 1); //等待事件，flag_rw != 1 唤醒条件
+	wait_event_interruptible(hello_readq, flag != 1);
 #endif
 
-	if(copy_to_user(buf, data, size))
+	if (copy_to_user(buff, data, size))
 		return -ENOMEM;
 
 #ifdef WAITEVENT_USE
-	flag_rw = 1;
+	flag  = 1;
 #endif
-	printk("hello_read\n");
-	return size;
+	printk("hello_read: buff = %s\n", buff);
+	return  size;
 }
 
 static ssize_t hello_write(struct file *file, const char __user *buff,
@@ -80,16 +84,20 @@ static ssize_t hello_write(struct file *file, const char __user *buff,
 
 	memset(data, '\0', sizeof(data));
 
-	if (0 != copy_from_user(data, buff, size))
+	if (copy_from_user(data, buff, size))
 		return -ENOMEM;
 
 #ifdef WAITEVENT_USE
-	flag_rw = 0;
-	wake_up_interruptible(&my_queue); //唤醒队列
+	flag = 0;
+	wake_up_interruptible(&hello_readq);
+#endif
+
+#ifdef FASYNC_USE
+	kill_fasync(&fasync,SIGIO,POLLIN);
 #endif
 
 	printk("hello_write\n");
-	printk("data = %s\n", data);
+	printk("data  = %s\n",data);
 
 	return size;
 }
@@ -109,6 +117,13 @@ static long hello_unlocked_ioctl(struct file *file, unsigned int cmd,
 	return 0;
 }
 
+#ifdef FASYNC_USE
+static int hello_fasync(int fd, struct file *file, int on)
+{
+	return fasync_helper(fd,file,on,&fasync);
+}
+#endif
+
 static struct cdev cdev;
 static struct file_operations hello_ops = {
 	.owner = THIS_MODULE,
@@ -117,25 +132,27 @@ static struct file_operations hello_ops = {
 	.write = hello_write,
 	.release = hello_release,
 	.unlocked_ioctl = hello_unlocked_ioctl,
+#ifdef FASYNC_USE
+	.fasync = hello_fasync,
+#endif
 };
-//自定义加载函数
+
 static int hello_init(void)
 {
 	int ret;
-	dev_t devno = MKDEV(major, minor); //申请设备号
+	dev_t  devno = MKDEV(major, minor);
 
-	ret = register_chrdev_region(devno, num_of_device, "xhello"); //注册设备号
+	ret = register_chrdev_region(devno, 1, "hello");
 	if (0 != ret) {
-		//alloc_chrdev_region(&devno,0,1,DEV_NAME); //自动分配设备号
-		printk("register_chrdev_region : error\n");
-		return -1;
+		//alloc_chrdev_region(&devno, 0, 1, "duang");
+		printk("register_chrdev_region \n");
 	}
 
-	cdev_init(&cdev, &hello_ops); //初始化cdev结构体
-	ret = cdev_add(&cdev, devno, num_of_device); //注册cdev结构体
+	cdev_init(&cdev, &hello_ops);
+	ret = cdev_add(&cdev, devno, 1);
 	if (0 != ret) {
-		printk("cdev_add\n");
-		unregister_chrdev_region(devno, num_of_device); //cdev结构体注册失败，卸载设备号
+		unregister_chrdev_region(devno, 1);
+		printk("cdev_add \n");
 		return -1;
 	}
 
@@ -148,12 +165,12 @@ static int hello_init(void)
 #endif
 
 #ifdef WAITEVENT_USE
-	init_waitqueue_head(&my_queue); //初始化“等待队列头”
+	init_waitqueue_head(&hello_readq);
 #endif
-	printk("hello_init\n");
+	printk("hello_init \n");
 	return 0;
 }
-//自定义卸载函数
+
 static void hello_exit(void)
 {
 	dev_t devno = MKDEV(major, minor);
@@ -166,9 +183,8 @@ static void hello_exit(void)
 	class_destroy(cls); //销毁类
 #endif
 
-	cdev_del(&cdev); //卸载cdev结构体
-	unregister_chrdev_region(devno, num_of_device); //卸载设备号
-
+	cdev_del(&cdev);
+	unregister_chrdev_region(devno, 1);
 	printk("hello_exit\n");
 }
 

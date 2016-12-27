@@ -97,9 +97,9 @@ static int hello_init(void)
 	int ret;
 	dev_t devno = MKDEV(major, minor); //申请设备号
 
-	//alloc_chrdev_region(&devno,0,1,DEV_NAME);
 	ret = register_chrdev_region(devno, num_of_device, "xhello"); //注册设备号
 	if (0 != ret) {
+		//alloc_chrdev_region(&devno,0,1,DEV_NAME);
 		printk("register_chrdev_region : error\n");
 		return -1;
 	}

@@ -28,7 +28,7 @@ static int hello_open (struct inode *inode, struct file *file)
 	return  0;
 
 }
-	
+
 static int hello_release (struct inode *inode, struct file *file)
 {
 
@@ -64,7 +64,7 @@ static ssize_t hello_read(struct file *file, char __user *buff, size_t size, lof
 	return  size;
 }
 
-	
+
 static ssize_t hello_write(struct file * file, const char __user *buff, size_t  size, loff_t *loff)
 {
 
@@ -81,7 +81,7 @@ static ssize_t hello_write(struct file * file, const char __user *buff, size_t  
 	ret = copy_from_user(data,buff,size);
 	if(0 != ret)
 	{
-	
+
 		return ENOMEM;
 	}
 
@@ -90,13 +90,13 @@ static ssize_t hello_write(struct file * file, const char __user *buff, size_t  
 	printk("data  = %s\n",data);
 	return size;
 }
-	
+
 static long hello_unlocked_ioctl(struct file *file, unsigned int  cmd, unsigned long  arg)
 {
 
 	switch(cmd)
 	{
-	
+
 	case LED_ON:
 		printk("LED_ON \n");
 		break;
@@ -107,7 +107,7 @@ static long hello_unlocked_ioctl(struct file *file, unsigned int  cmd, unsigned 
 	printk("hello_unlocked_ioctl \n");
 	return  0;
 }
-	
+
 static unsigned int hello_poll(struct file *file, struct poll_table_struct *table)
 {
 
@@ -117,13 +117,13 @@ static unsigned int hello_poll(struct file *file, struct poll_table_struct *tabl
 
 	if(flag  != 0)
 	{
-	
+
 		mask |=POLLOUT;
-	
+
 	}
 	if(flag != 1)
 	{
-	
+
 		mask |= POLLIN;
 
 	}
@@ -140,10 +140,8 @@ static struct file_operations  hello_ops = {
 	.write = hello_write,
 	.unlocked_ioctl = hello_unlocked_ioctl,
 	.poll = hello_poll,
-
-
-
 };
+
 static  int hello_init(void)
 {
 
@@ -158,14 +156,14 @@ static  int hello_init(void)
 		//alloc_chrdev_region(&devno,0,1,"duang");
 		printk("register_chrdev_region \n");
 
-		
+
 	}
 	cdev_init(&cdev,&hello_ops);
-	
+
 	ret = cdev_add(&cdev,devno,1);
 	if(0 != ret)
 	{
-	
+
 
 		unregister_chrdev_region(devno,1);
 		printk("cdev_add \n");
@@ -180,7 +178,6 @@ static  int hello_init(void)
 
 static void hello_exit(void)
 {
-
 	dev_t  devno  = MKDEV(major,minor);
 
 	cdev_del(&cdev);
@@ -190,7 +187,3 @@ static void hello_exit(void)
 
 module_init(hello_init);
 module_exit(hello_exit);
-
-
-
-

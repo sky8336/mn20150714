@@ -8,4 +8,4 @@ clean:
 	rm  -rf  *.ko *.o *.mod*  module* Mo* .*.cmd .tmp_versions
 
 
-obj-m = waitevent.o
+obj-m = waitevent_fasync.o
