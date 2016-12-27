@@ -9,12 +9,15 @@
 #define WAITEVENT_USE
 #define FASYNC_USE
 
-#ifdef WAITEVENT_USE
+#ifdef CLASS_DEV_CREATE
 #include <linux/device.h>
 #endif
 
 #ifdef WAITEVENT_USE
 #include <linux/sched.h>
+#endif
+
+#ifdef FASYNC_USE
 #include <linux/poll.h>
 #endif
 
@@ -32,7 +35,7 @@ static struct device *device;
 #endif
 
 #ifdef WAITEVENT_USE
-int  flag  =1;
+int flag =1;
 wait_queue_head_t  hello_readq;
 #endif
 
@@ -43,7 +46,7 @@ struct fasync_struct  *fasync;
 static int hello_open(struct inode *inode, struct file *file)
 {
 	printk("hello_open\n");
-	return  0;
+	return 0;
 }
 
 static int hello_release(struct inode *inode, struct file *file)
@@ -52,7 +55,7 @@ static int hello_release(struct inode *inode, struct file *file)
 	return 0;
 }
 
-static ssize_t hello_read(struct file *file, char __user *buff,
+static ssize_t hello_read(struct file *file, char __user *buf,
 		size_t size, loff_t *loff)
 {
 	if (size > N)
@@ -64,17 +67,17 @@ static ssize_t hello_read(struct file *file, char __user *buff,
 	wait_event_interruptible(hello_readq, flag != 1);
 #endif
 
-	if (copy_to_user(buff, data, size))
+	if (copy_to_user(buf, data, size))
 		return -ENOMEM;
 
 #ifdef WAITEVENT_USE
-	flag  = 1;
+	flag = 1;
 #endif
-	printk("hello_read: buff = %s\n", buff);
-	return  size;
+	printk("hello_read: buf = %s\n", buf);
+	return size;
 }
 
-static ssize_t hello_write(struct file *file, const char __user *buff,
+static ssize_t hello_write(struct file *file, const char __user *buf,
 		size_t size, loff_t *loff)
 {
 	if (size > N)
@@ -84,7 +87,7 @@ static ssize_t hello_write(struct file *file, const char __user *buff,
 
 	memset(data, '\0', sizeof(data));
 
-	if (copy_from_user(data, buff, size))
+	if (copy_from_user(data, buf, size))
 		return -ENOMEM;
 
 #ifdef WAITEVENT_USE
@@ -140,7 +143,7 @@ static struct file_operations hello_ops = {
 static int hello_init(void)
 {
 	int ret;
-	dev_t  devno = MKDEV(major, minor);
+	dev_t devno = MKDEV(major, minor);
 
 	ret = register_chrdev_region(devno, 1, "hello");
 	if (0 != ret) {
@@ -152,7 +155,7 @@ static int hello_init(void)
 	ret = cdev_add(&cdev, devno, 1);
 	if (0 != ret) {
 		unregister_chrdev_region(devno, 1);
-		printk("cdev_add \n");
+		printk("cdev_add error \n");
 		return -1;
 	}
 
@@ -167,7 +170,7 @@ static int hello_init(void)
 #ifdef WAITEVENT_USE
 	init_waitqueue_head(&hello_readq);
 #endif
-	printk("hello_init \n");
+	printk("hello_init\n");
 	return 0;
 }
 

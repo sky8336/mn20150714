@@ -4,9 +4,12 @@
 #include <fcntl.h>
 #include "head.h"
 #include <sys/ioctl.h>
-#include <signal.h>
 
 #define FASYNC_USE
+
+#ifdef FASYNC_USE
+#include <signal.h>
+#endif
 
 int fd;
 
@@ -14,6 +17,7 @@ int fd;
 void signal_handler(int signo)
 {
 	char buff[1024];
+
 	read(fd, buff, sizeof(buff));
 
 	printf("signo = %d\n", signo);
@@ -25,7 +29,7 @@ int main(int argc, const char *argv[])
 {
 	int flags  = 0;
 
-	fd  = open(argv[1], O_RDWR);
+	fd = open(argv[1], O_RDWR);
 	if (fd < 0) {
 		perror("fail open");
 		return -1;
