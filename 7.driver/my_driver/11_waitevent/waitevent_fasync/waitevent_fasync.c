@@ -7,6 +7,7 @@
 
 #define CLASS_DEV_CREATE
 #define WAITEVENT_USE
+#define FASYNC_USE
 
 #ifdef WAITEVENT_USE
 #include <linux/device.h>
@@ -41,14 +42,13 @@ struct fasync_struct  *fasync;
 
 static int hello_open(struct inode *inode, struct file *file)
 {
-	printk("hello_open  \n");
+	printk("hello_open\n");
 	return  0;
 }
 
 static int hello_release(struct inode *inode, struct file *file)
 {
-	printk("hello_release \n");
-
+	printk("hello_release\n");
 	return 0;
 }
 
@@ -93,11 +93,11 @@ static ssize_t hello_write(struct file *file, const char __user *buff,
 #endif
 
 #ifdef FASYNC_USE
-	kill_fasync(&fasync,SIGIO,POLLIN);
+	kill_fasync(&fasync, SIGIO, POLLIN);
 #endif
 
 	printk("hello_write\n");
-	printk("data  = %s\n",data);
+	printk("data = %s\n",data);
 
 	return size;
 }
@@ -120,7 +120,7 @@ static long hello_unlocked_ioctl(struct file *file, unsigned int cmd,
 #ifdef FASYNC_USE
 static int hello_fasync(int fd, struct file *file, int on)
 {
-	return fasync_helper(fd,file,on,&fasync);
+	return fasync_helper(fd, file, on, &fasync);
 }
 #endif
 

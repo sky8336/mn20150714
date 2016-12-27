@@ -8,7 +8,7 @@
 #define CLASS_DEV_CREATE
 #define WAITEVENT_USE
 
-#ifdef WAITEVENT_USE
+#ifdef CLASS_DEV_CREATE
 #include <linux/device.h>
 #endif
 
@@ -44,7 +44,6 @@ static int hello_open(struct inode *inode, struct file *file)
 static int hello_release(struct inode *inode, struct file *file)
 {
 	printk("hello_release\n");
-
 	return 0;
 }
 

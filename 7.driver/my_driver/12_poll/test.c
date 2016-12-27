@@ -8,67 +8,48 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+#define POLL_USE
+
 int main(int argc, const char *argv[])
 {
 	int fd;
-	fd_set readfds,writefds;
 
-//	int nbyte;
-//	char buff[20] = "hello world";
-	
-//	printf("\n************* sudo dmesg -c **************\n");
-//	system("sudo dmesg -c");
+#ifdef POLL_USE
+	fd_set readfds, writefds;
+#endif
 
 
-	fd = open("/dev/xhello-0",O_RDWR);	
-	if(0 > fd){
-		perror("open ");	
+	fd = open("/dev/xhello-0", O_RDWR);
+	if (0 > fd) {
+		perror("open /dev/xhello-0");
 		return -1;
 	}
 
-	
-	while(1){
-       FD_CLR(fd,&readfds);
-       FD_CLR(fd,&writefds);
 
-       FD_SET(fd,&readfds);
-       FD_SET(fd,&writefds);
+#ifdef POLL_USE
+	while (1) {
+		FD_CLR(fd, &readfds);
+		FD_CLR(fd, &writefds);
 
-	   if(0 > select(fd + 1,&readfds,&writefds,NULL, NULL)){
-		   perror("select");
-		   return -1;
-	   }
-		if(FD_ISSET(fd,&writefds)){
-			printf("you can write \n");
+		FD_SET(fd, &readfds);
+		FD_SET(fd, &writefds);
+
+		if (0 > select(fd + 1, &readfds, &writefds, NULL, NULL)) {
+			perror("select");
+			return -1;
+		}
+		if (FD_ISSET(fd, &writefds)) {
+			printf("you can write\n");
 			sleep(1);
 		}
-		if(FD_ISSET(fd,&readfds)){
-			printf("you can read \n");
+		if (FD_ISSET(fd, &readfds)) {
+			printf("you can read\n");
 			sleep(1);
 		}
-	
 	}
-#if 0
-	write(fd,buff,20);
-    nbyte = read(fd,buff, sizeof(buff));
-
-	printf("\n************* test.c : printf ************\n");
-	printf("test : buff[] = %s\n",buff);
-	printf("test : nbyte = %d\n",nbyte);
-	
-	ioctl(fd,LED_ON);
-	sleep(1);
-	ioctl(fd,LED_OFF);
 #endif
-//	printf("\n***************** dmesg ******************\n");
-//	system("dmesg");
-	sleep(10);
-//	while(1);
+
 	close(fd);
 
 	return 0;
-
 }
-
-
-
