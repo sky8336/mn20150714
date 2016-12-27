@@ -105,7 +105,7 @@ static ssize_t hello_write(struct file *file, const char __user *buf,
 #endif
 
 	printk("hello_write\n");
-	printk("data = %s\n",data);
+	printk("data = %s\n", data);
 
 	return size;
 }
