@@ -40,34 +40,24 @@ unsigned int *gpg3dat;
 
 static int hello_open(struct inode *inode,struct file *file)
 {
-	
-	//int minor;
 	printk("hello_open\n");
-//	minor = iminor(inode);
-//	printk("open minor = %d\n",minor);
-	
-
-//	writel((readl(gpg3dat) & (~ 0xffff)) | (0x1 << minor),gpg3dat);
-	
 	return 0;
 }
 
-static int hello_release (struct inode *inode, struct file *file)
+static int hello_release(struct inode *inode, struct file *file)
 {
-	//	flag ++;
-
 	printk("hello_release\n");
-
 	return 0;
 }
 
-static ssize_t hello_read (struct file *file, char __user *buf, size_t size, loff_t *loff)
+static ssize_t hello_read(struct file *file, char __user *buf,
+		size_t size, loff_t *loff)
 {
 	if(size > N){
 		size = N;
 	}
 	if(size < 0){
-		return -EINVAL;  
+		return -EINVAL;
 	}
 
 	wait_event_interruptible(hello_readq,flag_rw != 1); //等待事件，flag_rw != 1 唤醒条件
@@ -93,7 +83,7 @@ static ssize_t hello_write (struct file *file, const char __user *buff, size_t s
 		return -EINVAL;
 
 	if(0 != copy_from_user(data,buff,20)){
-		return -ENOMEM; 
+		return -ENOMEM;
 	}
 
 	flag_rw = 0;
@@ -104,14 +94,15 @@ static ssize_t hello_write (struct file *file, const char __user *buff, size_t s
 	printk("data = %s\n",data);
 	return size;
 }
+
 static long hello_unlocked_ioctl (struct file *file, unsigned int cmd, unsigned long arg)
 {
 	int var = 0;
-	int ret;	
+	int ret;
 	ret = copy_from_user(&var,(void *)arg,sizeof(arg));
-//	if(0 != ret){ //?
-//		return -1;		
-//	}
+	//	if(0 != ret){ //?
+	//		return -1;
+	//	}
 	if(var < 0 || var > 4){
 		return -EINVAL;
 	}
@@ -123,7 +114,6 @@ static long hello_unlocked_ioctl (struct file *file, unsigned int cmd, unsigned 
 		break;
 	case LED_OFF:
 		//	*gpg3dat &= (~ 0xf);
-
 		writel(readl(gpg3dat) & (~ 0x1 << var),gpg3dat);
 		break;
 
@@ -198,7 +188,7 @@ static int hello_init(void) //自定义加载函数
 	init_waitqueue_head(&hello_writeq); //初始化“等待队列头”
 
 	gpg3con = ioremap(GPG3CON,4); //LED
-	
+
 	if(NULL == gpg3con){
 		printk("pgp3con ioremap fail\n");
 		goto err2;
@@ -212,7 +202,7 @@ static int hello_init(void) //自定义加载函数
 	}
 
 	//	*gpg3con = ((*gpg3con) & (~ 0xffff)) | 0x1111;
-	//	*gpg3dat = ((*gpg3dat) & (~0xf)) | 0xf;	
+	//	*gpg3dat = ((*gpg3dat) & (~0xf)) | 0xf;
 	writel((readl(gpg3con) & (~ 0xffff)) | 0x1111,gpg3con);
 	writel(readl(gpg3dat) | 0xf,gpg3dat);
 
@@ -245,7 +235,7 @@ static void hello_exit(void) //自定义卸载函数
 	cdev_del(&cdev); //卸载cdev结构体
 	unregister_chrdev_region(devno,num_of_device); //卸载设备号
 
-	printk("hello_exit\n");	
+	printk("hello_exit\n");
 
 }
 

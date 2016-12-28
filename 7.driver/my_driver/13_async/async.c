@@ -85,12 +85,16 @@ static ssize_t hello_read(struct file *file, char __user *buf,
 static ssize_t hello_write(struct file *file, const char __user *buf,
 		size_t size, loff_t *loff)
 {
+#ifdef WAITEVENT_USE
 	wait_event_interruptible(hello_readq,flag_rw != 0);
+#endif
 
 	if (size > N)
 		size = N;
 	if (size < 0)
 		return -EINVAL;
+
+	memset(data, '\0', sizeof(data));
 
 	if (copy_from_user(data, buf, size))
 		return -ENOMEM;

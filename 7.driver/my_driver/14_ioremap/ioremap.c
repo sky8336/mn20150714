@@ -102,12 +102,16 @@ static ssize_t hello_read(struct file *file, char __user *buf,
 static ssize_t hello_write(struct file *file, const char __user *buf,
 		size_t size, loff_t *loff)
 {
-	wait_event_interruptible(hello_readq,flag_rw != 0);
+#ifdef WAITEVENT_USE
+	wait_event_interruptible(hello_readq, flag_rw != 0);
+#endif
 
 	if (size > N)
 		size = N;
 	if (size < 0)
 		return -EINVAL;
+
+	memset(data, '\0', sizeof(data));
 
 	if (copy_from_user(data, buf, size))
 		return -ENOMEM;
@@ -153,8 +157,8 @@ static long hello_unlocked_ioctl(struct file *file, unsigned int cmd,
 static unsigned int hello_poll(struct file *file, struct poll_table_struct *table)
 {
 	int mask = 0;
-	poll_wait(file,&hello_readq,table);
-	poll_wait(file,&hello_writeq,table);
+	poll_wait(file, &hello_readq, table);
+	poll_wait(file, &hello_writeq, table);
 
 	if (flag_rw != 0)
 		mask |= POLLOUT;
@@ -195,7 +199,7 @@ static int hello_init(void)
 
 	ret = register_chrdev_region(devno, num_of_device, "xhello"); //注册设备号
 	if (0 != ret) {
-		//alloc_chrdev_region(&devno,0,1,DEV_NAME); //自动分配设备号
+		//alloc_chrdev_region(&devno, 0, 1, DEV_NAME); //自动分配设备号
 		printk("register_chrdev_region : error\n");
 		return -1;
 	}
