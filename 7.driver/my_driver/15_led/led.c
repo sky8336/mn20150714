@@ -249,7 +249,9 @@ static int hello_init(void)
 	printk("hello_init\n");
 	return 0;
 err3:
+#ifdef IOREMAP_LED
 	iounmap(gpg3con);
+#endif
 err2:
 	cdev_del(&cdev); //卸载cdev结构体
 
