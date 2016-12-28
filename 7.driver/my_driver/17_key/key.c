@@ -8,9 +8,6 @@
 #include <linux/sched.h>
 
 #define INTERRUPT_KEY
-#ifdef INTERRUPT_KEY
-#include <mach/irqs.h>
-#endif
 
 #define N 128
 MODULE_LICENSE("GPL");
@@ -19,7 +16,7 @@ MODULE_LICENSE("GPL");
 int key_var;
 #endif
 
-int flag  = 0;
+int flag = 0;
 static int major = 220;
 static int minor = 0;
 char data[N] = "\0";
@@ -29,39 +26,39 @@ static struct cdev cdev;
 struct wait_queue_head_t hello_readq;
 
 #ifdef INTERRUPT_KEY
-irqreturn_t hello_handler(int irqno,void  *arg)
+irqreturn_t hello_handler(int irqno,void *arg)
 {
 	switch (irqno) {
 	case IRQ_EINT(1):
-		key_var  = 1;
-		flag  ++;
+		key_var = 1;
+		flag ++;
 		wake_up(&hello_readq);
 		break;
 
 	case IRQ_EINT(2):
-		key_var  = 2;
-		flag  ++;
+		key_var = 2;
+		flag ++;
 		wake_up(&hello_readq);
 		break;
 
 	case IRQ_EINT(3):
-		key_var  = 3;
-		flag  ++;
+		key_var = 3;
+		flag ++;
 		wake_up(&hello_readq);
 		break;
 	case IRQ_EINT(4):
-		key_var  = 4;
-		flag  ++;
+		key_var = 4;
+		flag ++;
 		wake_up(&hello_readq);
 		break;
 	case IRQ_EINT(6):
-		key_var  = 6;
-		flag  ++;
+		key_var = 6;
+		flag ++;
 		wake_up(&hello_readq);
 		break;
 	case IRQ_EINT(7):
-		key_var  = 7;
-		flag  ++;
+		key_var = 7;
+		flag ++;
 		wake_up(&hello_readq);
 		break;
 	}
@@ -103,7 +100,6 @@ static ssize_t hello_read(struct file *file, char __user *buf,
 static ssize_t hello_write(struct file *file, const char __user *buf,
 		size_t size, loff_t *loff)
 {
-
 	if (size > N)
 		size = N;
 	if (size < 0)
@@ -169,43 +165,43 @@ static int hello_init(void)
 #ifdef INTERRUPT_KEY
 	ret = request_irq(IRQ_EINT(1), hello_handler, IRQF_DISABLED|IRQF_TRIGGER_FALLING, "KEY1", NULL);
 	if (0 != ret) {
-		printk("request_irq  IRQ_EINT 1 failed\n");
-		goto  err2;
+		printk("request_irq IRQ_EINT 1 failed\n");
+		goto err2;
 	}
 
 	ret = request_irq(IRQ_EINT(2), hello_handler, IRQF_DISABLED|IRQF_TRIGGER_FALLING, "KEY2", NULL);
 	if (0 != ret) {
-		printk("request_irq  IRQ_EINT 2 failed\n");
-		goto  err3;
+		printk("request_irq IRQ_EINT 2 failed\n");
+		goto err3;
 	}
 
 	ret = request_irq(IRQ_EINT(3), hello_handler, IRQF_DISABLED|IRQF_TRIGGER_FALLING, "KEY3", NULL);
 	if (0 != ret) {
-		printk("request_irq  IRQ_EINT 3 failed\n");
-		goto  err4;
+		printk("request_irq IRQ_EINT 3 failed\n");
+		goto err4;
 	}
 
 	ret = request_irq(IRQ_EINT(4), hello_handler, IRQF_DISABLED|IRQF_TRIGGER_FALLING, "KEY4", NULL);
 	if (0 != ret) {
-		printk("request_irq  IRQ_EINT 4 failed\n");
-		goto  err5;
+		printk("request_irq IRQ_EINT 4 failed\n");
+		goto err5;
 	}
 
 	ret = request_irq(IRQ_EINT(6), hello_handler, IRQF_DISABLED|IRQF_TRIGGER_FALLING, "KEY6", NULL);
 	if (0 != ret) {
-		printk("request_irq  IRQ_EINT 6 failed\n");
-		goto  err6;
+		printk("request_irq IRQ_EINT 6 failed\n");
+		goto err6;
 	}
 
 	ret = request_irq(IRQ_EINT(7), hello_handler, IRQF_DISABLED|IRQF_TRIGGER_FALLING, "KEY7", NULL);
 	if (0 != ret) {
-		printk("request_irq  IRQ_EINT 7 failed\n");
-		goto  err7;
+		printk("request_irq IRQ_EINT 7 failed\n");
+		goto err7;
 	}
 #endif
 	printk("hello_init \n");
 
-	return  0;
+	return 0;
 
 #ifdef INTERRUPT_KEY
 err7:
