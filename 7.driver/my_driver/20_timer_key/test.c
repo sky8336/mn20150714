@@ -17,7 +17,7 @@ void signal_handler(int signo)
 	printf("signo = %d\n",signo);
 
 	read(fd,&key_var,sizeof(int));
-	
+
 	printf("*********************\n");
 	printf("key_var = %d\n",key_var);
 
@@ -41,7 +41,7 @@ int main(int argc, const char *argv[])
 		perror("open");
 		return -1;
 	}
-	
+
 	signal(SIGIO,signal_handler);
 
 	fcntl(fd,F_SETOWN,getpid());

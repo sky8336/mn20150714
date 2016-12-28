@@ -14,6 +14,7 @@
 #include "head.h"
 MODULE_LICENSE("GPL");
 
+#define TIMER_USE
 
 #define GPG3CON 0xE03001C0
 #define GPG3DAT 0xE03001C4
@@ -31,16 +32,18 @@ static wait_queue_head_t readq;
 unsigned int *gpg3con;
 unsigned int *gpg3dat;
 
-static struct timer_list my_timer;
 static struct fasync_struct *fap;
+
+#ifdef TIMER_USE
+static struct timer_list my_timer;
+
 void timer_func(unsigned long data)
 {
-	
-	switch(my_timer.data){
+	switch(my_timer.data) {
 	case IRQ_EINT(1):
 		key_var = 1;
 		break;
-		
+
 	case IRQ_EINT(2):
 		key_var = 2;
 		break;
@@ -63,27 +66,33 @@ void timer_func(unsigned long data)
 
 	kill_fasync(&fap,SIGIO,POLLIN);
 }
+#endif
 
-irqreturn_t hello_handler(int irqno,void *arg)
+irqreturn_t hello_handler(int irqno, void *arg)
 {
+#ifdef TIMER_USE
+	/*
+	 * 设定节拍数
+	 * mod_timer
+	 * */
 
 	my_timer.data = irqno;
-	mod_timer(&my_timer,jiffies + 10);
-
+	mod_timer(&my_timer, jiffies + 10);
+#endif
 
 	return IRQ_HANDLED;
 }
 
-static int hello_open (struct inode *inode, struct file *file)
+static int hello_open(struct inode *inode, struct file *file)
 {
 	printk("hello_open\n");
 	return 0;
 }
 
-static ssize_t hello_read (struct file *file, char __user *ubuff, size_t size, loff_t *loff)
+static ssize_t hello_read(struct file *file, char __user *ubuff, size_t size, loff_t *loff)
 {
-	int ret;	
-	if(size < 0 || size > 4)	
+	int ret;
+	if(size < 0 || size > 4)
 		return -EINVAL;
 
 	wait_event(readq,flag_var != 0);
@@ -95,54 +104,50 @@ static ssize_t hello_read (struct file *file, char __user *ubuff, size_t size, l
 }
 
 
-static ssize_t hello_write (struct file *file, const char __user *ubuff, size_t size, loff_t *loff)
+static ssize_t hello_write(struct file *file, const char __user *ubuff, size_t size, loff_t *loff)
 {
-	int ret;	
+	int ret;
 	if(size > 20)
 		size = 20;
 	if(size < 0 )
 		return -EINVAL;
-	ret = copy_from_user(buff,ubuff,size);
+
+	ret = copy_from_user(buff, ubuff, size);
 	printk("hello_write\n");
 	return size;
 }
 
 
-static int hello_release (struct inode *inode, struct file *file)
+static int hello_release(struct inode *inode, struct file *file)
 {
 	printk("hello_release\n");
-
 	return 0;
-
 }
 
 
-static long hello_unlocked_ioctl (struct file *file, unsigned int cmd, unsigned long arg)
+static long hello_unlocked_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
 	int var;
 	int ret;
+
 	ret = copy_from_user(&var,(void *)arg,sizeof(arg));
 
-	switch(cmd){
+	switch(cmd) {
 	case LED_ON:
 		writel((readl(gpg3dat) & (~0xf)) | (0x1 << var),gpg3dat);
 		break;
 	case LED_OFF:
 		writel(readl(gpg3dat) & (~ 0x1 << var),gpg3dat);
 		break;
-	
 	}
 
 	printk("hello_unlocked_ioctl\n");
 	return 0;
 }
 
-static int hello_fasync (int fd, struct file *file, int on)
+static int hello_fasync(int fd, struct file *file, int on)
 {
-	
 	return (fasync_helper(fd,file,on, &fap));
-
-	
 }
 
 static struct file_operations hello_ops = {
@@ -152,90 +157,89 @@ static struct file_operations hello_ops = {
 	.release = hello_release,
 	.unlocked_ioctl = hello_unlocked_ioctl,
 	.fasync = hello_fasync,
-
 };
 
 static int hello_init(void)
 {
 	int ret;
 
-	dev_t devno = MKDEV(major,minor);
+	dev_t devno = MKDEV(major, minor);
 
-	ret = register_chrdev_region(devno,1,"hello_key");
-	if(0 != ret){
+	ret = register_chrdev_region(devno, 1, "hello_key");
+	if (0 != ret) {
 		printk("register_chrdev_region fail\n");
 		return -EINVAL;
 	}
-	
-	cdev_init(&cdev,&hello_ops);
 
-	ret = cdev_add(&cdev,devno,1);
-	if(0 != ret){
+	cdev_init(&cdev, &hello_ops);
+
+	ret = cdev_add(&cdev, devno, 1);
+	if (0 != ret) {
 		printk("cdev_add fail\n");
 		goto err1;
 	}
 
 	init_waitqueue_head(&readq); //zhuyi
 
-	ret = request_irq(IRQ_EINT(1),hello_handler,IRQF_TRIGGER_FALLING | IRQF_DISABLED,"key1",NULL);
-	if(0 != ret){
+	ret = request_irq(IRQ_EINT(1), hello_handler, IRQF_TRIGGER_FALLING | IRQF_DISABLED, "key1", NULL);
+	if (0 != ret) {
 		printk("request_irq fail 1\n");
 		goto err2;
 	}
-	
-	ret = request_irq(IRQ_EINT(2),hello_handler,IRQF_TRIGGER_FALLING | IRQF_DISABLED,"key2",NULL);
-	if(0 != ret){
+
+	ret = request_irq(IRQ_EINT(2), hello_handler, IRQF_TRIGGER_FALLING | IRQF_DISABLED, "key2", NULL);
+	if (0 != ret) {
 		printk("request_irq fail 2\n");
 		goto err3;
 	}
-	ret = request_irq(IRQ_EINT(3),hello_handler,IRQF_TRIGGER_FALLING | IRQF_DISABLED,"key3",NULL);
-	if(0 != ret){
+	ret = request_irq(IRQ_EINT(3), hello_handler, IRQF_TRIGGER_FALLING | IRQF_DISABLED, "key3", NULL);
+	if (0 != ret) {
 		printk("request_irq fail 3\n");
 		goto err4;
 	}
-	ret = request_irq(IRQ_EINT(4),hello_handler,IRQF_TRIGGER_FALLING | IRQF_DISABLED,"key4",NULL);
-	if(0 != ret){
+	ret = request_irq(IRQ_EINT(4), hello_handler, IRQF_TRIGGER_FALLING | IRQF_DISABLED, "key4", NULL);
+	if (0 != ret) {
 		printk("request_irq fail 4\n");
 		goto err5;
 	}
-	ret = request_irq(IRQ_EINT(6),hello_handler,IRQF_TRIGGER_FALLING | IRQF_DISABLED,"key6",NULL);
-	if(0 != ret){
+	ret = request_irq(IRQ_EINT(6), hello_handler, IRQF_TRIGGER_FALLING | IRQF_DISABLED, "key6", NULL);
+	if (0 != ret) {
 		printk("request_irq fail 6 \n");
 		goto err6;
 	}
-	ret = request_irq(IRQ_EINT(7),hello_handler,IRQF_TRIGGER_FALLING | IRQF_DISABLED,"key7",NULL);
-	if(0 != ret){
+	ret = request_irq(IRQ_EINT(7), hello_handler, IRQF_TRIGGER_FALLING | IRQF_DISABLED, "key7", NULL);
+	if (0 != ret) {
 		printk("request_irq fail 7\n");
 		goto err7;
 	}
 
 
-	gpg3con = ioremap(GPG3CON,4);
-	gpg3dat = ioremap(GPG3DAT,4);
-	
-	writel((readl(gpg3con) & (~0xffff)) | (0x1111),gpg3con);
-	writel(readl(gpg3dat) | 0xf,gpg3dat);
+	gpg3con = ioremap(GPG3CON, 4);
+	gpg3dat = ioremap(GPG3DAT, 4);
 
+	writel((readl(gpg3con) & (~0xffff)) | (0x1111), gpg3con);
+	writel(readl(gpg3dat) | 0xf, gpg3dat);
+
+#ifdef TIMER_USE
 	my_timer.function = timer_func;
 	init_timer(&my_timer);
-	
 	add_timer(&my_timer);
+#endif
 
 	printk("hello_init\n");
 
 	return 0;
 
-
 err7:
-	free_irq(IRQ_EINT(6),"key6");
+	free_irq(IRQ_EINT(6), "key6");
 err6:
-	free_irq(IRQ_EINT(4),"key5");
+	free_irq(IRQ_EINT(4), "key5");
 err5:
-	free_irq(IRQ_EINT(3),"key4");
+	free_irq(IRQ_EINT(3), "key4");
 err4:
-	free_irq(IRQ_EINT(2),"key3");
+	free_irq(IRQ_EINT(2), "key3");
 err3:
-	free_irq(IRQ_EINT(1),"key1");
+	free_irq(IRQ_EINT(1), "key1");
 err2:
 	cdev_del(&cdev);
 err1:
@@ -245,64 +249,25 @@ err1:
 
 static void hello_exit(void)
 {
-	dev_t devno = MKDEV(major,minor);
+	dev_t devno = MKDEV(major, minor);
 
 	iounmap(gpg3con);
 	iounmap(gpg3dat);
 
-	free_irq(IRQ_EINT(7),"key7");
-	free_irq(IRQ_EINT(6),"key6");
-	free_irq(IRQ_EINT(4),"key4");
-	free_irq(IRQ_EINT(3),"key3");
-	free_irq(IRQ_EINT(2),"key2");
-	free_irq(IRQ_EINT(1),"key1");
+	free_irq(IRQ_EINT(7), "key7");
+	free_irq(IRQ_EINT(6), "key6");
+	free_irq(IRQ_EINT(4), "key4");
+	free_irq(IRQ_EINT(3), "key3");
+	free_irq(IRQ_EINT(2), "key2");
+	free_irq(IRQ_EINT(1), "key1");
 
 	cdev_del(&cdev);
-	
-	unregister_chrdev_region(devno,1);
-	
-	printk("hello_exit\n");
 
+	unregister_chrdev_region(devno, 1);
+
+	printk("hello_exit\n");
 }
 
 
 module_init(hello_init);
 module_exit(hello_exit);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
