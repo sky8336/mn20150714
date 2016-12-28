@@ -56,7 +56,7 @@ static ssize_t hello_read (struct file *file, char __user *buf, size_t size, lof
 		size = N;
 	}
 	if(size < 0){
-		return -EINVAL;  
+		return -EINVAL;
 	}
 
 	wait_event_interruptible(hello_readq,flag_rw != 1); //等待事件，flag_rw != 1 唤醒条件
@@ -82,7 +82,7 @@ static ssize_t hello_write (struct file *file, const char __user *buff, size_t s
 		return -EINVAL;
 
 	if(0 != copy_from_user(data,buff,20)){
-		return -ENOMEM; 
+		return -ENOMEM;
 	}
 
 	flag_rw = 0;
@@ -194,7 +194,7 @@ static int hello_init(void) //自定义加载函数
 	}
 
 	//	*gpg3con = ((*gpg3con) & (~ 0xffff)) | 0x1111;
-	//	*gpg3dat = ((*gpg3dat) & (~0xf)) | 0xf;	
+	//	*gpg3dat = ((*gpg3dat) & (~0xf)) | 0xf;
 	writel((readl(gpg3con) & (~ 0xffff)) | 0x1111,gpg3con);
 	writel(readl(gpg3dat) | 0xf,gpg3dat);
 
@@ -224,7 +224,7 @@ static void hello_exit(void) //自定义卸载函数
 	cdev_del(&cdev); //卸载cdev结构体
 	unregister_chrdev_region(devno,num_of_device); //卸载设备号
 
-	printk("hello_exit\n");	
+	printk("hello_exit\n");
 
 }
 

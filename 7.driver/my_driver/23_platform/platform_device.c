@@ -23,10 +23,8 @@ static int hello_init(void)
 	return platform_device_register(&hello_device);
 }
 
-
 static void hello_exit(void)
 {
-
 	printk("platform_device : hello_exit\n");
 	platform_device_unregister(&hello_device);
 
@@ -34,9 +32,3 @@ static void hello_exit(void)
 
 module_init(hello_init);
 module_exit(hello_exit);
-
-
-
-
-
-
