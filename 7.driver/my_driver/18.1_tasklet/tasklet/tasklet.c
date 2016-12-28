@@ -9,7 +9,7 @@
 #include <linux/delay.h>
 MODULE_LICENSE("GPL");
 
-#define WORK_QUEUE_USE
+#define TASKLET_USE
 
 static int major = 250;
 static int minor = 0;
@@ -17,13 +17,13 @@ char data[128] = "\0";
 
 static struct cdev cdev;
 
-#ifdef WORK_QUEUE_USE
-static struct work_struct my_queue;
+#ifdef TASKLET_USE
+static struct tasklet_struct my_tasklet;
 
-void hello_work(unsigned long data)
+void hello_tasklet(unsigned long data)
 {
 	msleep(5);
-	printk("jiffies = %ld\n",jiffies);
+	printk("hello_tasklet = %ld\n", data);
 }
 #endif
 
@@ -35,9 +35,10 @@ static int hello_open(struct inode *inode, struct file *file)
 
 static int hello_release(struct inode *inode, struct file *file)
 {
-	printk("hello_release\n");
+	printk("hello_release \n");
 	return 0;
 }
+
 
 static ssize_t hello_read(struct file *file, char __user *buff, size_t size, loff_t *loff)
 {
@@ -52,7 +53,7 @@ static ssize_t hello_read(struct file *file, char __user *buff, size_t size, lof
 	if (ret != 0)
 		return -ENOMEM;
 
-	printk("buff = %s\n",buff);
+	printk("buff = %s\n", buff);
 	printk("hello_read\n");
 	return size;
 }
@@ -61,20 +62,21 @@ static ssize_t hello_write(struct file * file, const char __user *buff, size_t s
 {
 	int ret;
 
-	if (size > 128)
+	if(size > 128)
 		size = 128;
-	if (size < 0)
+	if(size < 0)
 		return -EINVAL;
+
 
 	ret = copy_from_user(data, buff, size);
 	if (0 != ret)
 		return -ENOMEM;
 
 	printk("hello_write\n");
-	printk("write data = %s\n",data);
+	printk("write data = %s\n", data);
 
-#ifdef WORK_QUEUE_USE
-	schedule_work(&my_queue);
+#ifdef TASKLET_USE
+	tasklet_schedule(&my_tasklet);
 #endif
 
 	return size;
@@ -82,6 +84,7 @@ static ssize_t hello_write(struct file * file, const char __user *buff, size_t s
 
 static long hello_unlocked_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
+
 	switch(cmd) {
 	case LED_ON:
 		printk("LED_ON\n");
@@ -107,35 +110,36 @@ static int hello_init(void)
 {
 	int ret;
 
-	dev_t devno = MKDEV(major,minor);
+	dev_t devno = MKDEV(major, minor);
 
-	ret = register_chrdev_region(devno,1,"hello");
+	ret = register_chrdev_region(devno, 1, "hello");
 	if (0 != ret) {
-		//alloc_chrdev_region(&devno,0,1,"duang");
-		printk("register_chrdev_region \n");
+		//alloc_chrdev_region(&devno, 0, 1, "duang");
+		printk("register_chrdev_region\n");
 	}
 
-	cdev_init(&cdev,&hello_ops);
-	ret = cdev_add(&cdev,devno,1);
+	cdev_init(&cdev, &hello_ops);
+	ret = cdev_add(&cdev, devno, 1);
 	if (0 != ret) {
-		unregister_chrdev_region(devno,1);
-		printk("cdev_add \n");
+		unregister_chrdev_region(devno, 1);
+		printk("cdev_add\n");
 		return -1;
 	}
 
-#ifdef WORK_QUEUE_USE
-	INIT_WORK(&my_queue,(void *)hello_work);
+#ifdef TASKLET_USE
+	tasklet_init(&my_tasklet, hello_tasklet, 123);
 #endif
-	printk("hello_init \n");
+
+	printk("hello_init\n");
 	return 0;
 }
 
 static void hello_exit(void)
 {
-	dev_t devno = MKDEV(major,minor);
+	dev_t devno = MKDEV(major, minor);
 
 	cdev_del(&cdev);
-	unregister_chrdev_region(devno,1);
+	unregister_chrdev_region(devno, 1);
 	printk("hello_exit\n");
 }
 

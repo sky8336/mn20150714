@@ -38,45 +38,45 @@ struct cdev cdev;
 dev_t dev = 0;
 
 struct file_operations hello_fops = {
-  .owner = THIS_MODULE
+	.owner = THIS_MODULE
 };
 
 static void char_reg_setup_cdev (void)
 {
-  int error, devno = MKDEV (hello_major, hello_minor);
-  cdev_init (&cdev, &hello_fops);
-  cdev.owner = THIS_MODULE;
- // cdev.ops = &hello_fops;
-  error = cdev_add (&cdev, devno , 1);
-  if (error)
-    printk (KERN_NOTICE "Error %d adding char_reg_setup_cdev", error);
+	int error, devno = MKDEV (hello_major, hello_minor);
+	cdev_init (&cdev, &hello_fops);
+	cdev.owner = THIS_MODULE;
+	// cdev.ops = &hello_fops;
+	error = cdev_add (&cdev, devno , 1);
+	if (error)
+		printk (KERN_NOTICE "Error %d adding char_reg_setup_cdev", error);
 
 }
 
 static int __init hello_2_init (void)
 {
-  int result;
-  dev = MKDEV (hello_major, hello_minor);
-  result = register_chrdev_region (dev, number_of_devices, "hello");
-  if (result<0) {
-    printk (KERN_WARNING "hello: can't get major number %d\n", hello_major);
-    return result;
-  }
+	int result;
+	dev = MKDEV (hello_major, hello_minor);
+	result = register_chrdev_region (dev, number_of_devices, "hello");
+	if (result<0) {
+		printk (KERN_WARNING "hello: can't get major number %d\n", hello_major);
+		return result;
+	}
 
-  char_reg_setup_cdev ();
-  printk (KERN_INFO "Registered character driver\n");
-  return 0;
+	char_reg_setup_cdev ();
+	printk (KERN_INFO "Registered character driver\n");
+	return 0;
 }
 
 static void __exit hello_2_exit (void)
 {
-  dev_t devno = MKDEV (hello_major, hello_minor);
-  
-  cdev_del (&cdev);
+	dev_t devno = MKDEV (hello_major, hello_minor);
 
-  unregister_chrdev_region (devno, number_of_devices);
+	cdev_del (&cdev);
 
-  printk (KERN_INFO "char driver cleaned up\n");
+	unregister_chrdev_region (devno, number_of_devices);
+
+	printk (KERN_INFO "char driver cleaned up\n");
 }
 
 module_init (hello_2_init);

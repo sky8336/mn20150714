@@ -7,25 +7,25 @@ COMPILATION
 
 To compile, as root use make in the working directory of the code:
 
-  # make
+# make
 
 TESTING
 =======
 
 To load the module, do (as root):
 
-  # insmod char-dev-reg.ko 
+# insmod char-dev-reg.ko 
 
-You can check for an entry for the module (if it is loaded) from the output of:
+	You can check for an entry for the module (if it is loaded) from the output of:
 
-  # lsmod | grep char
+# lsmod | grep char
 
-To remove the module, do (as root):
+	To remove the module, do (as root):
 
-  # rmmod char-dev-reg
+# rmmod char-dev-reg
 
-Kernel log messages can be viewed from the output of dmesg.
+		Kernel log messages can be viewed from the output of dmesg.
 
-To cleanup the compiled modules, use:
+		To cleanup the compiled modules, use:
 
-  # make clean
+# make clean
