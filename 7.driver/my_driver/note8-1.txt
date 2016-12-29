@@ -70,7 +70,7 @@ iii:
 	    MKDEV(MAJOR,MINOR);
 
     注册设备号
-	register_chdev_region
+	register_chrdev_region
 	判断返回值 
 
 	初始化 cdev
@@ -100,7 +100,7 @@ int flag  = 0;
 	   wait_event(    ,flag !=  0);
 	 ii.读数据
 	 
-	 data  = readl(adccon + ADC_DATA0 & 0xfff);
+	 data  = readl(adccon + ADC_DATA0) & 0xfff);
 	  
 	 copy_to_user();
 
@@ -113,7 +113,7 @@ iiii：中断处理函数
 
 
     i.清中断
-	writel（0,adccon+ADC_CLEAR）；
+	writel（0,adccon+ADC_CLEAR）；//write any value to clear interrupt
 	ii.唤醒读
 
 	flag  =1;
@@ -134,7 +134,7 @@ iiii：中断处理函数
 
 		cdev_del
 		释放设备号
-		unregister_chdev_region
+		unregister_chrdev_region
        关闭时钟   clk_disable
 		free_irq
 		iounmap

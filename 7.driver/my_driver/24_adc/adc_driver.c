@@ -22,7 +22,7 @@ MODULE_LICENSE("GPL");
 int major = 250;
 int minor = 0;
 
-	
+
 static struct cdev cdev;
 int flag = 1;
 static wait_queue_head_t readq;
@@ -37,20 +37,20 @@ struct resource *irqres ;
 
 irqreturn_t adc_handler(int irqno,void *arg)
 {
-	writel(0,adccon + ADC_CLEAR);
+	writel(0, adccon + ADC_CLEAR);
 	flag = 0;
 	wake_up(&readq);
 
 	return IRQ_HANDLED;
-
 }
 
-static int adc_open (struct inode *inode, struct file *filp)
+static int adc_open(struct inode *inode, struct file *filp)
 {
 	printk("adc_open\n");
 	return 0;
 }
-static int adc_release (struct inode *inode, struct file *filp)
+
+static int adc_release(struct inode *inode, struct file *filp)
 {
 	printk("adc_release\n");
 	return 0;
@@ -61,74 +61,67 @@ static ssize_t adc_read(struct file *file, char __user *buff, size_t size, loff_
 	int data;
 	int ret;
 
-	writel(readl(adccon) | (0x1 << 0),adccon);
+	writel(readl(adccon) | (0x1 << 0), adccon);
 
-	wait_event(readq,flag != 1);
+	wait_event(readq, flag != 1);
 
 	data = readl(adccon + ADC_DATA0)  & 0xfff;
-	ret = copy_to_user(buff,(void *)&data,sizeof(int));
+	ret = copy_to_user(buff, (void *)&data, sizeof(int));
 	flag = 1;
 
 	return size;
-
 }
+
 static struct file_operations adc_fops = {
 	.open = adc_open,
 	.release = adc_release,
 	.read = adc_read,
-
-
 };
 
 
 static int s5pc100_adc_probe(struct platform_device *pdev)
 {
-
 	dev_t devno = MKDEV(major,minor);
-	//	void __iomem *adccon ;
+	//void __iomem *adccon ;
 	static int ret;
 
-	struct resource *memres = platform_get_resource(pdev,IORESOURCE_MEM,0);
-	irqres = platform_get_resource(pdev,IORESOURCE_IRQ,0);
+	struct resource *memres = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	irqres = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
 
 	if(memres == NULL || irqres == NULL)
 		return -ENOMEM;
 
-
-
-	adccon = ioremap(memres->start,memres->end - memres->start);
+	adccon = ioremap(memres->start, memres->end - memres->start);
 	if(adccon == NULL)
 		return -EFAULT;
 
-	ret = request_irq(irqres->start,adc_handler,IRQF_DISABLED,"ADC",NULL);
-	if(ret != 0){
+	ret = request_irq(irqres->start, adc_handler, IRQF_DISABLED, "ADC", NULL);
+	if (ret != 0)
 		goto err1;
-	}
 
-	clk_t = clk_get(NULL,"adc");
+	clk_t = clk_get(NULL, "adc");
 	ret = clk_enable(clk_t);
 	if(ret != 0)
 		goto err2;
 
-	writel(0,ADC_MUTEX + adccon);
-	writel(1 << 16 | 1 << 14 | 0xff << 6,adccon);
+	writel(0, ADC_MUTEX + adccon);
+	writel(1 << 16 | 1 << 14 | 0xff << 6, adccon);
 
 
-	ret = register_chrdev_region(devno,1,"s5pc100-adc");
+	ret = register_chrdev_region(devno, 1, "s5pc100-adc");
 	if(ret != 0)
 		goto err3;
 
-	cdev_init(&cdev,&adc_fops);
-	ret = cdev_add(&cdev,devno,1);
-	if(ret != 0)
+	cdev_init(&cdev, &adc_fops);
+	ret = cdev_add(&cdev, devno, 1);
+	if (ret != 0)
 		goto err4;
 
 	init_waitqueue_head(&readq);
 
-	printk("mach ok\n");
+	printk("match ok\n");
 
 	return 0;
-
 
 err4:
 	unregister_chrdev_region(devno,1);
@@ -139,9 +132,9 @@ err2:
 err1:
 	iounmap(adccon);
 
-
 	return ret;
 }
+
 static int s5pc100_adc_remove(struct platform_device *dev)
 {
 	dev_t devno = MKDEV(major,minor);
@@ -150,9 +143,8 @@ static int s5pc100_adc_remove(struct platform_device *dev)
 	unregister_chrdev_region(devno,1);
 
 	clk_disable(clk_t);
-	free_irq(irqres->start,"ADC");
+	free_irq(irqres->start, "ADC");
 	iounmap(adccon);
-
 
 	printk("hello_remove\n");
 
@@ -160,7 +152,7 @@ static int s5pc100_adc_remove(struct platform_device *dev)
 }
 
 static struct platform_driver s5pc100_adc = {
-	.driver.name ="s5pc100-adc",
+	.driver.name = "s5pc100-adc",
 	.probe = s5pc100_adc_probe,
 	.remove = s5pc100_adc_remove,
 
@@ -181,8 +173,3 @@ static void hello_exit(void)
 
 module_init(hello_init);
 module_exit(hello_exit);
-
-
-
-
-
