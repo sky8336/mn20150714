@@ -32,6 +32,7 @@ struct  irqaction{
 	int  irq；//中断号 
 	struct  proc_dir_entry  *dir;//指向的是irq相关的描述符
 }
+
 【3】中断的注册
 内部中断号：/arch/arm/mach-s5pc100/include/mach/irqs.h
 外部中断号：/arch/arm/plat-s5p/include/plat/irqs.h
@@ -65,7 +66,7 @@ irqreturn_t   hello_handler(int irqno ,void  * arg)
 {
 
 	return 1.IRQ_NONE;
-	       2.IRQ_HANDLED;/////////////////
+	       2.IRQ_HANDLED;//use it
 		   3.IRQ_WAKE_THREAD;
 }
 
@@ -122,10 +123,7 @@ request_irq(IRQ_EINT(1),hello_handler,IRQF_TRIGGER_FALLING|IRQF_DISABLED,“key1
 	 int  flag  = 0;
 	   irqreturn_t  hello_handler(int irqno,void  *arg)
 		{
-		
-			switch(irqno)
-			{
-			
+			switch(irqno) {
 				case   中断号：
 					key  =1；
 					flag  ++;
@@ -145,6 +143,5 @@ request_irq(IRQ_EINT(1),hello_handler,IRQF_TRIGGER_FALLING|IRQF_DISABLED,“key1
 	设备号
 	  unregister_chrdev_region
    自定义卸载函数
-
 
 

@@ -43,13 +43,11 @@
 
 	void  __iomem  *adccon;
 	adccon  = ioremap(memres_->start,memres->end-memres->start);
-	if(adccon  ==  NULL)
+	if(adccon  ==  null)
 	{
 	
 	}
 
-request_irq(unsigned int irq, irq_handler_t handler, unsigned long flags,
-	    const char *name, void *dev)
     request_irq(irqres->start,adc_handler,DIALED,"ADC");
 	判断返回值
 
@@ -64,7 +62,7 @@ request_irq(unsigned int irq, irq_handler_t handler, unsigned long flags,
 	clk_t  = clk_get(NULL,"adc");获取时钟
 	           clk_enable(clk_t);      使能时钟
 
-	  writel(0,ADC_MUTEX+adccon);//
+	  writel(0,ADC_MUTEX+adccon);
 	  writel((1 <<  16| 1<< 14 | 0xff << 6),adccon);
 iii:
    
@@ -99,10 +97,10 @@ int flag  = 0;
 	   writel(readl(adccon) |(0x 1  << 0),adccon);
 
 	   等中断
-	   wait_event(  readq  ,flag !=  0);
+	   wait_event(    ,flag !=  0);
 	 ii.读数据
 	 
-	 data  = readl(adccon + ADC_DATA0) & 0xfff;
+	 data  = readl(adccon + ADC_DATA0) & 0xfff);
 	  
 	 copy_to_user();
 
@@ -115,7 +113,7 @@ iiii：中断处理函数
 
 
     i.清中断
-	writel（0,adccon+ADC_CLEAR）；//xie ren yi zhi qing zhongduan 
+	writel（0,adccon+ADC_CLEAR）；//write any value to clear interrupt
 	ii.唤醒读
 
 	flag  =1;
@@ -125,7 +123,7 @@ iiii：中断处理函数
 
 	卸载函数：
 
-	int   s5pc100_remove()
+int s5pc100_remove()
 {
 
 	和probe相反的操作
@@ -135,21 +133,23 @@ iiii：中断处理函数
 
 
 		cdev_del
-		释放设备号		unregister_chrdev_region
+		释放设备号
+		unregister_chrdev_region
        关闭时钟   clk_disable
 		free_irq
 		iounmap
 }
 	 
 
-static int   hello_init(void)
+static int hello_init(void)
 {
 
 
 	return     platform_driver_register(&s5pc100_adc);
 
 }
-static void  hello_exit(void )
+
+static void  hello_exit(void)
 {
 
 	platform_driver_unregister(&s5pc100_adc);
@@ -157,12 +157,4 @@ static void  hello_exit(void )
 
 module_init(hello_init);
 module_exit(hello_exit);
-
-
-
-
-
-
-
-
 
