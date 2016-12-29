@@ -30,9 +30,8 @@ static int hello_init(void)
 
 static void hello_exit(void)
 {
-
 	printk("hello_exit\n");
-	platform_device_unregister(&hello_driver);
+	platform_driver_unregister(&hello_driver);
 }
 
 module_init(hello_init);
